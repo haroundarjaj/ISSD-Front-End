@@ -1,18 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import './index.css';
 
 import "./assets/css/nucleo-icons.css";
 import "./assets/scss/blk-design-system-react.scss?v=1.2.0";
 import "./assets/demo/demo.css";
 
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import SelectorPage from './Pages/selector/SelectorPage';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import ExcepcionadasPage from './Pages/excepcionadas/ExcepcionadasPage';
 
+import reportWebVitals from './reportWebVitals';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import IndexNavbar from './Components/IndexNavbar';
+import Application from './Containers/App/Application';
 
 const darkTheme = createTheme({
   palette: {
@@ -23,18 +22,8 @@ const darkTheme = createTheme({
 ReactDOM.render(
   <ThemeProvider theme={darkTheme}>
     <BrowserRouter>
-      <Switch>
-        <Route path="/home" render={(props) => <App {...props} />} />
-        <Route
-          path="/selector"
-          render={(props) => <SelectorPage {...props} />}
-        />
-        <Route
-          path="/excepcionadas/:id"
-          render={(props) => <ExcepcionadasPage {...props} />}
-        />
-        <Redirect from="/" to="/home" />
-      </Switch>
+      {/* <IndexNavbar /> */}
+      <Application />
     </BrowserRouter>
   </ThemeProvider>,
   document.getElementById("root")

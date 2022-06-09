@@ -17,10 +17,7 @@ const DataForm = (props) => {
     const {
         register,
         handleSubmit,
-        control,
         reset,
-        getValues,
-        setValue,
         watch
     } = useForm();
 

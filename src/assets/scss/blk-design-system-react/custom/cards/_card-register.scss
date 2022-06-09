@@ -5,8 +5,8 @@
 
   .card-header img {
     position: absolute;
-    margin-left: -50px;
-    margin-top: -150px;
+    margin-left: -120px;
+    margin-top: -170px;
     border-radius: 20%;
     width: 350px;
     }
@@ -45,8 +45,7 @@
         font-size: 5em;
         font-weight: 900;
         color: $black;
-        text-transform: lowercase;
-        margin-left: -5px;
+        margin-left: -12px;
         z-index: 1;
       }
     }
@@ -71,8 +70,9 @@
     }
 
     .card-footer {
+      text-align: center;
         margin-bottom: 10px;
-        margin-top: 24px;
+        margin-top: 10px;
     }
 }
 

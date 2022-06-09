@@ -1,27 +1,23 @@
-import { Dialog, Slide } from "@mui/material";
+import { Dialog, DialogContent, DialogTitle, Paper, Slide, Zoom } from "@mui/material";
 import React, { useState } from "react";
+import { useHistory } from 'react-router-dom';
 import { Container, Button } from "reactstrap";
 import LoginForm from "../../Components/LoginForm";
-import MainDialog from "./MainDialog";
 
 
 const MainPage = (props) => {
-    const [openLoginDialog, setOpenLoginDialog] = useState(false);
-    const [openMainDialog, setOpenMainDialog] = useState(false);
+    const history = useHistory();
+    const [openDialog, setOpenDialog] = useState(false);
+    const [loggedIn, setLoggedIn] = useState(false);
 
     const handleCloseDialog = () => {
-        setOpenLoginDialog(false);
-        setOpenMainDialog(false);
+        setOpenDialog(false);
+        setLoggedIn(false);
     }
 
     const isSuccessLogin = () => {
-        setOpenLoginDialog(false);
-        setOpenMainDialog(true);
-    }
-
-    const handleLogout = () => {
-        setOpenLoginDialog(true);
-        setOpenMainDialog(false);
+        setOpenDialog(false);
+        setLoggedIn(true);
     }
     return (
         <div className="page-header header-filter">
@@ -44,14 +40,7 @@ const MainPage = (props) => {
                                 pathname: '/selector',
                             });
                         }}*/
-                        onClick={() => {
-                            const AUTH_TOKEN = localStorage.getItem('token');
-                            if (AUTH_TOKEN) {
-                                setOpenMainDialog(true)
-                            } else {
-                                setOpenLoginDialog(true)
-                            }
-                        }}
+                        onClick={() => setOpenDialog(true)}
                     >
                         <i className="tim-icons icon-double-right" />
                     </Button>
@@ -60,25 +49,21 @@ const MainPage = (props) => {
             <Dialog
                 fullWidth
                 maxWidth="sm"
-                open={openLoginDialog}
+                open={openDialog}
                 onClose={handleCloseDialog}
                 scroll='paper'
                 PaperComponent={() => LoginForm({ isSuccessLogin: isSuccessLogin })}
                 BackdropProps={{ style: { backgroundColor: "transparent" } }}
-                TransitionComponent={Slide}
-                TransitionProps={{ direction: "right" }}
                 transitionDuration={300}
             />
             <Dialog
                 fullWidth
                 maxWidth="sm"
-                open={openMainDialog}
+                open={loggedIn}
                 onClose={handleCloseDialog}
                 scroll='paper'
-                PaperComponent={() => MainDialog({ handleLogout: handleLogout })}
+                PaperComponent={LoginForm}
                 BackdropProps={{ style: { backgroundColor: "transparent" } }}
-                TransitionComponent={Slide}
-                TransitionProps={{ direction: "left" }}
                 transitionDuration={300}
             />
         </div>

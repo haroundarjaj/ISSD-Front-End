@@ -36,7 +36,7 @@ const MainPage = (props) => {
                 <div className="content-center brand">
                     <img
                         alt="..."
-                        style={{ width: 300, marginBottom: 30 }}
+                        style={{ width: 300, marginBottom: 30, marginTop: '-20vh' }}
                         src={require("../../assets/img/RNUM_logo.png")}
                     />
                     <h1 className="h1-seo">ISSD• W</h1>

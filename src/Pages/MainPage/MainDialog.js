@@ -4,9 +4,12 @@ import {
     Card,
     Container,
 } from "reactstrap";
-import { Divider } from "@mui/material";
+import { useHistory } from 'react-router-dom';
+import { Divider, Tooltip } from "@mui/material";
 
 const MainDialog = (props) => {
+    const history = useHistory();
+
     const [squares1to6, setSquares1to6] = React.useState("");
     const [greetingMessage, setGreetingMessage] = useState('');
     const [loggedUser, setLoggedUser] = useState(null);
@@ -62,14 +65,33 @@ const MainDialog = (props) => {
                             </h3>
                             <Divider style={{ width: '50%' }} />
                             <br />
-                            <h4 className="d-none d-sm-block">
-                                Accede a:
-                            </h4>
+                            <h3 className="d-none d-sm-block">
+                                Accede a ...
+                            </h3>
                             <div style={{ display: 'flex', justifyContent: "space-around" }}>
-                                <Button className="btn-round" color="primary" style={{ width: 200 }}>
+                                <Button
+                                    className="btn-round"
+                                    color="primary"
+                                    style={{ width: 200 }}
+                                    onClick={() => {
+                                        history.push({
+                                            pathname: '/consulta',
+
+                                        });
+                                    }}>
                                     Consulta de direcciones
                                 </Button>
-                                <Button className="btn-round" color="primary" size="lg" >
+                                <Button
+                                    className="btn-round"
+                                    color="primary"
+                                    size="lg"
+                                    onClick={() => {
+                                        history.push({
+                                            pathname: '/selector',
+
+                                        });
+                                    }}
+                                >
                                     Excepcionadas
                                 </Button>
                             </div>
@@ -77,12 +99,16 @@ const MainDialog = (props) => {
                         </Container>
                     </div>
                     <div style={{ width: '100%', display: 'flex', justifyContent: "center", marginBottom: 10 }}>
-                        <Button className="btn-round btn-link" size="sm"
-                            // onClick={() => setOpenDialog(true)}
-                            onClick={logout}
-                        >
-                            <i className="tim-icons icon-button-power" />
-                        </Button>
+                        <Tooltip title="Cerrar sesión">
+                            <span>
+                                <Button className="btn-round btn-link" size="sm"
+                                    // onClick={() => setOpenDialog(true)}
+                                    onClick={logout}
+                                >
+                                    <i className="tim-icons icon-button-power" />
+                                </Button>
+                            </span>
+                        </Tooltip>
                     </div>
                     <div className="main-dialog-bg" />
                     <div

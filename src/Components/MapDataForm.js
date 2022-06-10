@@ -5,15 +5,14 @@ import {
     FormGroup,
     Label,
     Input,
-    FormText,
     Button,
     Card,
     CardBody
 } from 'reactstrap';
 import { useForm } from "react-hook-form";
 
-const DataForm = (props) => {
-    const { data, handleInfoChanged } = props;
+const MapDataForm = (props) => {
+    const { data, handleInfoChanged, isConsult, openSaveConfirmation } = props;
     const {
         register,
         handleSubmit,
@@ -24,6 +23,7 @@ const DataForm = (props) => {
     const onFormSubmit = (data) => {
         // this data needs some preparation before sending it to the server
         console.log(data);
+        openSaveConfirmation(true)
     }
 
     useEffect(() => {
@@ -49,7 +49,7 @@ const DataForm = (props) => {
         <Card>
             <CardBody>
                 <Form
-                    id='dataForm'
+                    id='mapDataForm'
                     onSubmit={handleSubmit(onFormSubmit)}
                 >
 
@@ -348,17 +348,17 @@ const DataForm = (props) => {
                             </div>
                         </div>
                     </FormGroup>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Button form='dataForm' color="primary" type="submit">
-                            Modifica
-                        </Button>
+                    {!isConsult && <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <Button color="warning">
-                            Elimina
+                            Indeterminada
                         </Button>
-                    </div>
+                        <Button form='mapDataForm' color="primary" type="submit">
+                            Guardar
+                        </Button>
+                    </div>}
                 </Form>
             </CardBody>
         </Card >);
 }
 
-export default DataForm;
+export default MapDataForm;

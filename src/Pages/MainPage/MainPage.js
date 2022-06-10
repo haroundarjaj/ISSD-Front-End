@@ -34,6 +34,11 @@ const MainPage = (props) => {
             <div className="squares square7" />
             <Container>
                 <div className="content-center brand">
+                    <img
+                        alt="..."
+                        style={{ width: 300, marginBottom: 30 }}
+                        src={require("../../assets/img/RNUM_logo.png")}
+                    />
                     <h1 className="h1-seo">ISSD• W</h1>
                     <h3 className="d-none d-sm-block">
                         GET STARTED

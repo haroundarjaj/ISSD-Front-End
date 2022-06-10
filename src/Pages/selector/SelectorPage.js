@@ -115,7 +115,7 @@ const SelectorPage = props => {
                         <BreadcrumbItem active>Selector</BreadcrumbItem>
                     </Breadcrumb>
                     <h3 className="d-none d-sm-block text-center">
-                        Title here
+                        Direcciones Excepcionadas Pendientes
                     </h3>
                     {loading ?
                         <div style={{ width: '100%', height: '60vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

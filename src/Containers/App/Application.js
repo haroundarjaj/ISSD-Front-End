@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 import App from '../../App';
 import { Route, Switch, Redirect, useHistory } from "react-router-dom";
-import { decodeToken, isExpired } from 'react-jwt';
+import { isExpired } from 'react-jwt';
+import IndexNavbar from '../../Components/IndexNavbar';
 import SelectorPage from '../../Pages/selector/SelectorPage';
 import ExcepcionadasPage from '../../Pages/excepcionadas/ExcepcionadasPage';
+import ConsultaPage from '../../Pages/Consulta/ConsultaPage';
 
 const Application = (props) => {
     const history = useHistory();
@@ -25,11 +27,15 @@ const Application = (props) => {
             <Route path="/home" render={(props) => <App {...props} />} />
             <Route
                 path="/selector"
-                render={(props) => <SelectorPage {...props} />}
+                render={(props) => (<><IndexNavbar /><SelectorPage {...props} /></>)}
             />
             <Route
                 path="/excepcionadas/:id"
-                render={(props) => <ExcepcionadasPage {...props} />}
+                render={(props) => (<><IndexNavbar /><ExcepcionadasPage {...props} /></>)}
+            />
+            <Route
+                path="/consulta"
+                render={(props) => (<><IndexNavbar /><ConsultaPage {...props} /></>)}
             />
             <Redirect from="/" to="/home" />
         </Switch>

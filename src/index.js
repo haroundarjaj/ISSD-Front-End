@@ -10,7 +10,6 @@ import "./assets/demo/demo.css";
 
 import reportWebVitals from './reportWebVitals';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import IndexNavbar from './Components/IndexNavbar';
 import Application from './Containers/App/Application';
 
 const darkTheme = createTheme({
@@ -22,7 +21,6 @@ const darkTheme = createTheme({
 ReactDOM.render(
   <ThemeProvider theme={darkTheme}>
     <BrowserRouter>
-      {/* <IndexNavbar /> */}
       <Application />
     </BrowserRouter>
   </ThemeProvider>,

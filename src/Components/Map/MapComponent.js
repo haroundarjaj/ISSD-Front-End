@@ -1,14 +1,16 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-loop-func */
 import React, { useMemo } from 'react'
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import { googleMapsApiKey } from '../../Config/apiUrl';
 
 const containerStyle = {
     width: '100%',
-    height: '90vh'
+    height: '95vh'
 };
 
 const MapComponent = (props) => {
-    const { location, zoom, handleDragEndMarker } = props;
+    const { location, zoom, handleDragEndMarker, isConsult } = props;
     const { isLoaded } = useJsApiLoader({
         id: 'google-map-script',
         googleMapsApiKey: googleMapsApiKey
@@ -174,6 +176,11 @@ const MapComponent = (props) => {
     }, [])
 
     console.log(map)
+    console.log(center)
+    console.log(isConsult && JSON.stringify(center) === JSON.stringify({ lat: 0, lng: 0 }))
+    console.log(isConsult)
+    console.log(center === { lat: 0, lng: 0 })
+
 
     return isLoaded ? (
         <GoogleMap
@@ -181,15 +188,16 @@ const MapComponent = (props) => {
             defaultCenter={location}
             defaultZoom={zoom}
             center={center || location}
+            zoom={zoom}
             onLoad={onLoad}
             onUnmount={onUnmount}
         >
             { /* Child components, such as markers, info windows, etc. */}
-            <Marker
+            {(isConsult && JSON.stringify(center) === JSON.stringify({ lat: 0, lng: 0 })) ? <></> : <Marker
                 position={center || location}
                 draggable
                 onDragEnd={onDragEndMarker}
-            />
+            />}
         </GoogleMap>
     ) : <></>
 }

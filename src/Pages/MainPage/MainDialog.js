@@ -55,8 +55,8 @@ const MainDialog = (props) => {
     }, [])
 
     return (
-        <Container style={{ maxWidth: "700px" }}>
-            <Card className="card-register">
+        <Container style={{ maxWidth: "700px"}}>
+            <Card className="card-register" style={{ boxShadow: "0px 0px 30px 2px rgba(255,255,255,.05)" }}>
                 <div className="main-dialog">
                     <div className="section section-examples" data-background-color="black">
                         <Container align="center">

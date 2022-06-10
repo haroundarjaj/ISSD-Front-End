@@ -92,7 +92,7 @@ const LoginForm = (props) => {
     console.log(isUsernameError)
     return (
         <Container style={{ maxWidth: "500px", height: '50vh' }}>
-            <Card className="card-register">
+            <Card className="card-register" style={{ boxShadow: "0px 0px 30px 2px rgba(255,255,255,.05)" }}>
                 <CardHeader>
                     <CardImg
                         alt="..."

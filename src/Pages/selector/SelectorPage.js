@@ -6,6 +6,7 @@ import { Breadcrumb, BreadcrumbItem, Container, Button } from 'reactstrap'
 import PaginationComponent from '../../Components/PaginationComponent';
 import axios from 'axios';
 import { openVPNApi } from '../../Config/apiUrl'
+import AddressServices from '../../Services/AddressServices';
 
 
 /* const rows = [
@@ -97,13 +98,10 @@ const SelectorPage = props => {
         })
 
 
-        // AddressServices.getAll().then((res) => {
-        //     console.log(res)
-        //     // setDirecciones(res.data)
-        //     // setCurrentPage(1);
-        //      // setLoading(false);
-        //     console.log(res.data)
-        // })
+        AddressServices.getAll().then((res) => {
+            console.log(res)
+            console.log(res.data)
+        })
 
 
         /* setTimeout(function () {

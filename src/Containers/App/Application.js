@@ -12,6 +12,8 @@ const Application = (props) => {
 
     useEffect(() => {
         const AUTH_TOKEN = localStorage.getItem('token');
+        console.log(AUTH_TOKEN)
+        console.log(isExpired(AUTH_TOKEN))
         if (AUTH_TOKEN && !isExpired(AUTH_TOKEN)) {
             // axios.defaults.headers.common.Authorization = `Bearer ${AUTH_TOKEN}`;
         } else {

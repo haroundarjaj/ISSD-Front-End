@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Container, Breadcrumb, BreadcrumbItem, Input, Row, Col } from 'reactstrap';
 import MapComponent from '../../Components/Map/MapComponent';
 import axios from 'axios';
-import { API } from '../../Config/apiUrl';
+import { openVPNApi } from '../../Config/apiUrl';
 import { withStyles } from '@mui/styles';
 import { Dialog, Divider, List, ListItem, ListItemButton, ListItemText, Paper, Typography, Zoom } from '@mui/material';
 import { alpha } from "@mui/material";
@@ -68,7 +68,7 @@ const ExcepcionadasPage = (props) => {
             },
             size: 5
         };
-        axios.get(`${API}/direcciones/_search`, {
+        axios.get(`${openVPNApi}/direcciones/_search`, {
             params: {
                 source: JSON.stringify(query),
                 source_content_type: 'application/json'

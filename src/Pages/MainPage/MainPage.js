@@ -1,8 +1,9 @@
 import { Dialog, Slide } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Button } from "reactstrap";
 import LoginForm from "../../Components/LoginForm";
 import MainDialog from "./MainDialog";
+import { isExpired } from 'react-jwt';
 
 
 const MainPage = (props) => {
@@ -23,6 +24,7 @@ const MainPage = (props) => {
         setOpenLoginDialog(true);
         setOpenMainDialog(false);
     }
+
     return (
         <div className="page-header header-filter">
             <div className="squares square1" />
@@ -51,10 +53,10 @@ const MainPage = (props) => {
                         }}*/
                         onClick={() => {
                             const AUTH_TOKEN = localStorage.getItem('token');
-                            if (AUTH_TOKEN) {
-                                setOpenMainDialog(true)
-                            } else {
+                            if(! AUTH_TOKEN || isExpired(AUTH_TOKEN)) {
                                 setOpenLoginDialog(true)
+                            } else {
+                                setOpenMainDialog(true)
                             }
                         }}
                     >

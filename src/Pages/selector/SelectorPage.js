@@ -139,6 +139,9 @@ const SelectorPage = props => {
                                     {currentTableData.map((row, index) => (
                                         <TableRow hover key={index} onDoubleClick={() => handleOpenRow(row)}>
                                             <TableCell component="th" scope="row">
+                                                123456789
+                                            </TableCell>
+                                            <TableCell component="th" scope="row">
                                                 {row._source.direccion_normalizada}
                                             </TableCell>
                                             <TableCell align='right'>

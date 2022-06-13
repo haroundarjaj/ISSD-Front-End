@@ -5,7 +5,8 @@ import { withStyles } from '@mui/styles';
 import { Breadcrumb, BreadcrumbItem, Container, Button } from 'reactstrap'
 import PaginationComponent from '../../Components/PaginationComponent';
 import axios from 'axios';
-import AddressServices from '../../Services/AddressServices';
+import { openVPNApi } from '../../Config/apiUrl'
+
 
 /* const rows = [
     'address 1', 'address 2', 'address 3', 'address 4', 'address 5', 'address 6', 'address 7', 'address 8', 'address 9',
@@ -61,13 +62,50 @@ const SelectorPage = props => {
     }
 
     useEffect(() => {
-        AddressServices.getAll().then((res) => {
-            console.log(res)
-            // setDirecciones(res.data)
-            // setCurrentPage(1);
-             // setLoading(false);
-            console.log(res.data)
+        const query = {
+            query: {
+                /*match: {
+                  "direccion_normalizada": document.getElementById("search_location").value
+                },
+                match_phrase: {
+                  "tipo": "EXCEPCIONADA"
+                }*/
+                bool: {
+                    must: [
+                        {
+                            match: {
+                                "tipo": "excepcionada"
+                            }
+                        }
+                    ]
+                }
+
+            },
+            size: 30
+        };
+
+        axios.get(`${openVPNApi}/direcciones/_search`, {
+            params: {
+                source: JSON.stringify(query),
+                source_content_type: 'application/json'
+            }
+        }).then((res) => {
+            setDirecciones(res.data.hits.hits)
+            setCurrentPage(1);
+            setLoading(false);
+            console.log(res.data.hits.hits)
         })
+
+
+        // AddressServices.getAll().then((res) => {
+        //     console.log(res)
+        //     // setDirecciones(res.data)
+        //     // setCurrentPage(1);
+        //      // setLoading(false);
+        //     console.log(res.data)
+        // })
+
+
         /* setTimeout(function () {
             setLoading(false);
         }, 3000); */

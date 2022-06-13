@@ -10,6 +10,11 @@ import {
     CardBody
 } from 'reactstrap';
 import { useForm } from "react-hook-form";
+import $ from 'jquery'
+import { useParams } from 'react-router-dom';
+
+
+
 
 const MapDataForm = (props) => {
     const { data, handleInfoChanged, isConsult, openSaveConfirmation } = props;
@@ -22,7 +27,7 @@ const MapDataForm = (props) => {
 
     const onFormSubmit = (data) => {
         // this data needs some preparation before sending it to the server
-        console.log(data);
+        //console.log('aqui va la data',data);
         openSaveConfirmation(true)
     }
 
@@ -43,8 +48,114 @@ const MapDataForm = (props) => {
 
     console.log(watch('id'))
     console.log(register("id"))
+	console.log("se le dio click")
+	const { id } = useParams();
+    console.log(data)
+	var dirnorm = ""
+	function ccb()
+	{
+		console.log("si cambia")
+		window.$dirnorm="ssss"
+	}
+	//-----------------------------------------------------
+	var elmuni ="";
+			var lcalle ="";
+			var lnumero ="";
+			var lcolonia="";
+			var lpostal="";
+			var lestado ="";
+			var llat="";
+			var llng="";
+			
+	if(data !=undefined && data.address_components!= undefined)
+	{
+	
+		console.log(data)
+			
+		var address_components = data.address_components;
+						//console.log(results[2].address_components);
+	
+						var components={};
+							for(var cc=0; cc<data.address_components.length;cc++)
+						{
+							var address_components1 = data.address_components;
+							var components1 = {}
+							//console.log(address_components1[cc])
+							$.each(address_components1,function(k,v1) {$.each(v1.types,function(k2, v2){components1[v2]=v1.long_name});});
+							if(components1.administrative_area_level_2 != null)
+							{
+								elmuni = components1.administrative_area_level_2
+							}
+							if(components1.administrative_area_level_1 != null)
+							{
+								lestado = components1.administrative_area_level_1
+							}
+							if(components1.administrative_area_level_3 != null)
+							{
+								elmuni = components1.administrative_area_level_3
+							}
+							if(components1.locality != null)
+							{
+								elmuni = components1.locality
+							}
+							if(components1.route != null)
+							{
+								lcalle = components1.route
+							}
+							if(address_components1[cc].types[0] == 'street_number')
+							{
+								lnumero = components1.street_number
+							}
+							if(components1.sublocality != null)
+							{
+								lcolonia = components1.sublocality
+							}
+							if(components1.postal_code != null)
+							{
+								lpostal = components1.postal_code
+							}
+						}
+						var components={};
+                    $.each(address_components,function(k,v1) {$.each(v1.types,function(k2, v2){components[v2]=v1.long_name});});
+					
+					var formato = data.formatted_address.split(",");
+						//console.log(formato[formato.length-4])
+						//console.log(formato)
+						
+						if(elmuni == null)
+						{
+							elmuni = formato[formato.length-4]
+						}
+						console.log(data['geometry'].location)
+						llat = data['geometry'].location.lat;
+						llng =data['geometry'].location.lng;
+	}
+	else if(data!=null)
+	{
+		console.log(data)
+		lestado = data._source.nivel_1
+		elmuni = data._source.nivel_2
+		lcolonia = data._source.nivel_3
+		lcalle = data._source.nivel_5
+		lnumero = data._source.nivel_6
+		lpostal = data._source.nivel_7
+		llat = data._source.latitud;
+		llng =data._source.longitud;
+	}
+	console.log(elmuni)
+	console.log(lestado)
+	console.log(llat)
+	var dirnorm = elmuni
+	
+					//console.log("QQQQQQQQQQQQQQQQQQQQQqq "+lcalle)
+					//console.log(components.country);
 
-    console.log(data?._id)
+	
+	
+	
+	
+	
+	//------------------------------------------------------
     return (
         <Card>
             <CardBody>
@@ -68,7 +179,7 @@ const MapDataForm = (props) => {
                                     name="id"
                                     id="id"
                                     Placeholder="ID"
-                                    value={data?._id}
+                                    value={id}
                                 />
                             </div>
                         </div>
@@ -88,7 +199,7 @@ const MapDataForm = (props) => {
                                     name="estado_normalizacion"
                                     id="estado_normalizacion"
                                     Placeholder="Tipo"
-                                    defaultValue={data?._source.estado_normalizacion}
+                                    defaultValue={""}
                                 />
                             </div>
                         </div>
@@ -107,7 +218,7 @@ const MapDataForm = (props) => {
                                     type="select"
                                     name="tipo"
                                     id="tipo"
-                                    defaultValue={data?._source.tipo?.toUpperCase()}
+                                    defaultValue={""}
                                     style={{ backgroundColor: "#1F2251" }}
                                 >
                                     <option style={{ backgroundColor: "#1F2251" }}>EXCEPCIONADA</option>
@@ -123,7 +234,7 @@ const MapDataForm = (props) => {
                         </div>
                         <div className="col" colSpan="4" style={{ paddingLeft: 30, paddingRight: 10 }}>
                             <h6>
-                                {data?._source.direccion_normalizada}
+                                {window.$dirnorm}
                             </h6>
                         </div>
                     </div>
@@ -137,13 +248,13 @@ const MapDataForm = (props) => {
                                 <Input
                                     innerRef={register("nivel_estado").ref}
                                     onChange={(e) => {
-                                        register("nivel_estado").onChange(e);
+                                        register("nivel_estado").onChange(ccb());
                                     }}
                                     type="text"
                                     name="nivel_estado"
                                     id="nivel_estado"
                                     Placeholder="Estado"
-                                    defaultValue={data?._source.nivel_1}
+                                    defaultValue={lestado}
                                 />
                             </div>
                         </div>
@@ -163,7 +274,7 @@ const MapDataForm = (props) => {
                                     name="nivel_municipio"
                                     id="nivel_municipio"
                                     Placeholder="Municipio"
-                                    defaultValue={data?._source.nivel_2}
+                                    defaultValue={elmuni}
                                 />
                             </div>
                         </div>
@@ -183,7 +294,7 @@ const MapDataForm = (props) => {
                                     name="nivel_colonia"
                                     id="nivel_colonia"
                                     Placeholder="Colonia"
-                                    defaultValue={data?._source.nivel_3}
+                                    defaultValue={lcolonia}
                                 />
                             </div>
                         </div>
@@ -203,7 +314,7 @@ const MapDataForm = (props) => {
                                     name="nivel_tipo_calle"
                                     id="nivel_tipo_calle"
                                     Placeholder="Tipo Calle"
-                                    defaultValue={data?._source.nivel_4}
+                                    defaultValue={""}
                                 />
                             </div>
                         </div>
@@ -223,7 +334,7 @@ const MapDataForm = (props) => {
                                     name="nivel_calle"
                                     id="nivel_calle"
                                     Placeholder="Nombre Calle"
-                                    defaultValue={data?._source.nivel_5}
+                                    defaultValue={lcalle}
                                 />
                             </div>
                         </div>
@@ -243,7 +354,7 @@ const MapDataForm = (props) => {
                                     name="nivel_numero"
                                     id="nivel_numero"
                                     Placeholder="Nivel Numero"
-                                    defaultValue={data?._source.nivel_6}
+                                    defaultValue={lnumero}
                                 />
                             </div>
                         </div>
@@ -263,7 +374,7 @@ const MapDataForm = (props) => {
                                     name="nivel_codigo_postal"
                                     id="nivel_codigo_postal"
                                     Placeholder="Codigo Postal"
-                                    defaultValue={data?._source.nivel_7}
+                                    defaultValue={lpostal}
                                 />
                             </div>
                         </div>
@@ -283,7 +394,7 @@ const MapDataForm = (props) => {
                                     name="fecha_insercion"
                                     id="fecha_insercion"
                                     Placeholder="Fecha Inserción"
-                                    defaultValue={data?._source.fecha_insercion}
+                                    defaultValue={""}
                                 />
                             </div>
                         </div>
@@ -303,7 +414,7 @@ const MapDataForm = (props) => {
                                     name="fecha_ultimo_cambio"
                                     id="fecha_ultimo_cambio"
                                     Placeholder="Fecha Último Cambio"
-                                    defaultValue={data?._source.fecha_ultimo_cambio}
+                                    defaultValue={""}
                                 />
                             </div>
                         </div>
@@ -323,7 +434,7 @@ const MapDataForm = (props) => {
                                     name="latitud"
                                     id="latitud"
                                     Placeholder="Lat"
-                                    defaultValue={data?._source.latitud}
+                                    defaultValue={llat}
                                 />
                             </div>
                         </div>
@@ -343,7 +454,7 @@ const MapDataForm = (props) => {
                                     name="longitud"
                                     id="longitud"
                                     Placeholder="Long"
-                                    defaultValue={data?._source.longitud}
+                                    defaultValue={llng}
                                 />
                             </div>
                         </div>

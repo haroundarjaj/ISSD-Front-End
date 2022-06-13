@@ -19,12 +19,12 @@ const MapComponent = (props) => {
     const [map, setMap] = React.useState(null);
     const [center, setCenter] = React.useState(null);
 
-    useMemo(() => {
+    /*useMemo(() => {
         setCenter({ lat: location.lat, lng: location.lng });
-    }, [location]);
+    }, [location]);*/
 
     const onDragEndMarker = (e) => {
-        setCenter(e.latLng)
+        //setCenter(e.latLng)
         const geocoder = new window.google.maps.Geocoder();
         geocoder.geocode({ latLng: e.latLng })
             .then((response) => {

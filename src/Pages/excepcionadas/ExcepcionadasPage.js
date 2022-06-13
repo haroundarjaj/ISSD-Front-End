@@ -3,12 +3,27 @@ import { useParams } from 'react-router-dom';
 import { Container, Breadcrumb, BreadcrumbItem, Input, Row, Col } from 'reactstrap';
 import MapComponent from '../../Components/Map/MapComponent';
 import axios from 'axios';
-import { openVPNApi } from '../../Config/apiUrl';
+import { API } from '../../Config/apiUrl';
 import { withStyles } from '@mui/styles';
 import { Dialog, Divider, List, ListItem, ListItemButton, ListItemText, Paper, Typography, Zoom } from '@mui/material';
 import { alpha } from "@mui/material";
 import MapDataForm from '../../Components/MapDataForm';
 import ConfirmationDialog from '../../Components/ConfirmationDialog';
+import { Map, GoogleApiWrapper } from 'google-maps-react';
+
+
+
+
+
+const options = {
+  method: 'GET',
+  url: 'https://google-maps-geocoding.p.rapidapi.com/geocode/json',
+  params: {latlng: '40.714224,-73.96145', language: 'en'},
+  headers: {
+    'X-RapidAPI-Key': 'AIzaSyDoLzHyM8TTL2LnInXa18HrrrdY2gG4CbE',
+    'X-RapidAPI-Host': 'google-maps-geocoding.p.rapidapi.com'
+  }
+};
 
 const PaperStyled = withStyles(theme => ({
     root: {
@@ -19,6 +34,9 @@ const PaperStyled = withStyles(theme => ({
         height: 117
     },
 }))(Paper);
+ 
+//window.$texto = ""
+var $dir= ""
 
 const listItems = [
     { title: 'Address 1', isfromServer: true },
@@ -58,8 +76,40 @@ const ExcepcionadasPage = (props) => {
     const handleInfoChanged = (value) => {
         setInfoValue(value);
     }
+function geocoder(dir){
+	axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=`+dir[0]['TERMINAL_LONGITUD']+`,`+dir[0]['TERMINAL_LATITUD']+`&key=AIzaSyDoLzHyM8TTL2LnInXa18HrrrdY2gG4CbE`, {
+
+        }).then((res) => {
+			console.log(res.data.results)
+			setSelectedDirection(res.data.results[0])
+			var rr = [0]
+			rr  = res.data.results
+			console.log(rr)
+			delete rr[rr.length-1]
+			delete rr[rr.length-2]
+			setAddressesData(rr)
+			console.log("---------------------------------",rr.length)
+			console.log(rr[0])
+        })
+}
+function regeocoder(texto)
+{
+			axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=`+texto+`&key=AIzaSyDoLzHyM8TTL2LnInXa18HrrrdY2gG4CbE`, {
+
+        }).then((res) => {
+			console.log(res.data.results)
+			setSelectedDirection(res.data.results[0])
+			setAddressesData(res.data.results)
+        })
+		
+		
+}
+	
 
     useEffect(() => {
+		
+		
+		
         const query = {
             query: {
                 match: {
@@ -68,17 +118,25 @@ const ExcepcionadasPage = (props) => {
             },
             size: 5
         };
-        axios.get(`${openVPNApi}/direcciones/_search`, {
-            params: {
-                source: JSON.stringify(query),
-                source_content_type: 'application/json'
-            }
+        axios.get(`http://localhost:4444/api/consulta/`+id, {
+
         }).then((res) => {
-            setSelectedDirection(res.data.hits.hits[0])
-            console.log(res.data.hits.hits)
+			console.log(res.data)
+            //setSelectedDirection(res.data[0])
+            console.log(res.data[0]['ID_DOMICILIO_RNUM'])
+			{var texto = res.data[0]['SUBTITULO']+" "+res.data[0]['CALLE']+" "+res.data[0]['NUMERO']+" "+res.data[0]['CIUDAD']+" "+res.data[0]['ESTADO']}
+			window.texto =texto = res.data[0]['SUBTITULO']+" "+res.data[0]['CALLE']+" "+res.data[0]['NUMERO']+" "+res.data[0]['CIUDAD']+" "+res.data[0]['ESTADO']
+			 //regeocoder(texto)
+			 geocoder(res.data)
+			 
+			
         })
+		//-----------------------------------
+		
+		//------------------------------------
     }, []);
     console.log(props)
+
     return (
         <>
             <div className="section section-typo">
@@ -102,7 +160,7 @@ const ExcepcionadasPage = (props) => {
                         type="text"
                         name="info"
                         id="info-input"
-                        value={infoValue}
+                        value={window.texto}
                     />
                     <PaperStyled>
                         <List>
@@ -125,7 +183,7 @@ const ExcepcionadasPage = (props) => {
                                 <ListItem dense disablePadding onClick={() => handleSearchItemClick(row)} style={row._id === selectedDirection?._id ? { backgroundColor: 'gray' } : {}}>
                                     <ListItemButton>
                                         <ListItemText
-                                            primary={<Typography variant="body2">{row._source.direccion_normalizada}</Typography>} />
+                                            primary={<Typography variant="body2">{row.formatted_address}</Typography>} />
                                     </ListItemButton>
                                 </ListItem>)}
                         </List>
@@ -134,7 +192,7 @@ const ExcepcionadasPage = (props) => {
                     <Row>
                         <Col>
                             {selectedDirection ?
-                                <MapComponent location={{ lat: parseFloat(selectedDirection?._source.latitud), lng: parseFloat(selectedDirection?._source.longitud) }} zoom={zoom} handleDragEndMarker={handleDragEndMarker} />
+                                <MapComponent location={{ lat: parseFloat(0.0), lng: parseFloat(0.0) }} zoom={zoom} handleDragEndMarker={handleDragEndMarker} />
                                 : <div style={{ width: '100%', height: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                                     Loading Map...
                                     <img
@@ -161,7 +219,7 @@ const ExcepcionadasPage = (props) => {
                             message: '¿Está seguro que esta dirección es la normalizada?',
                             confirmButton: true,
                             cancelButton: true,
-                            confirmButtonText: 'SÍ Seguro',
+                            confirmButtonText: 'Sí Seguro',
                             cancelButtonText: 'Cancelar',
                             handleConfirmAction: () => setIsOpenConfirmation(false),
                             handleCancelAction: () => setIsOpenConfirmation(false)
@@ -172,5 +230,4 @@ const ExcepcionadasPage = (props) => {
         </>
     );
 }
-
 export default ExcepcionadasPage;

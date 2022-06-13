@@ -57,7 +57,7 @@ const SelectorPage = props => {
 
     const handleOpenRow = (row) => {
         history.push({
-            pathname: '/excepcionadas/' + row._id,
+            pathname: '/excepcionadas/' + row['ID_DOMICILIO_RNUM'],
 
         });
     }
@@ -85,16 +85,18 @@ const SelectorPage = props => {
             size: 30
         };
 
-        axios.get(`${openVPNApi}/direcciones/_search`, {
+        axios.get(`http://localhost:4444/api/consulta`, {
             params: {
                 source: JSON.stringify(query),
                 source_content_type: 'application/json'
             }
         }).then((res) => {
-            setDirecciones(res.data.hits.hits)
+            
+			console.log("-----------------------------------------------------------------------------------------------------------------")
             setCurrentPage(1);
             setLoading(false);
-            console.log(res.data.hits.hits)
+            console.log(res.data)
+			setDirecciones(res.data)
         })
 
 
@@ -139,10 +141,10 @@ const SelectorPage = props => {
                                     {currentTableData.map((row, index) => (
                                         <TableRow hover key={index} onDoubleClick={() => handleOpenRow(row)}>
                                             <TableCell component="th" scope="row">
-                                                123456789
+											{row['ID_DOMICILIO_RNUM']}
                                             </TableCell>
                                             <TableCell component="th" scope="row">
-                                                {row._source.direccion_normalizada}
+                                                {row['SUBTITULO']+" "+row['CALLE']+" "+row['NUMERO']+" "+row['COLONIA']+" "+row['CIUDAD']+" "+row['ESTADO']}
                                             </TableCell>
                                             <TableCell align='right'>
                                                 <Button className="btn-simple btn-icon" size="sm" color="success"

@@ -85,7 +85,7 @@ const SelectorPage = props => {
             size: 30
         };
 
-        axios.get(`http://localhost:4444/api/consulta`, {
+        axios.get(`http://localhost:9090/api/consulta`, {
             params: {
                 source: JSON.stringify(query),
                 source_content_type: 'application/json'

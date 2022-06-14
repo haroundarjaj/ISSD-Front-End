@@ -49,7 +49,8 @@ const ExcepcionadasPage = (props) => {
     const { id } = useParams();
 
     const [selectedDirection, setSelectedDirection] = useState(null);
-    const [isOpenConfirmation, setIsOpenConfirmation] = useState(false);
+    const [isOpenSaveConfirmation, setIsOpenSaveConfirmation] = useState(false);
+    const [isOpenIndeterminateConfirmation, setIsOpenIndeterminateSaveConfirmation] = useState(false);
     const [addressesData, setAddressesData] = useState([
         { _id: 'testid1', _source: { direccion_normalizada: 'address 1' } },
         { _id: 'testid2', _source: { direccion_normalizada: 'address 2' } },
@@ -76,20 +77,32 @@ const ExcepcionadasPage = (props) => {
         setInfoValue(value);
     }
 
-    const handleOpenConfirmationDialog = (data) => {
+    const handleOpenSaveConfirmationDialog = (data) => {
         setFormData(data);
-        setIsOpenConfirmation(true)
+        setIsOpenSaveConfirmation(true)
+    }
+
+    const handleOpenIndeterminateConfirmationDialog = () => {
+        setIsOpenIndeterminateSaveConfirmation(true)
     }
 
     const handleCloseConfirmationDialog = () => {
         setFormData(null);
-        setIsOpenConfirmation(false)
+        setIsOpenSaveConfirmation(false)
+        setIsOpenIndeterminateSaveConfirmation(false)
     }
 
     const handleConfirmSaving = () => {
         console.log('****************************************************************');
         console.log('formData')
         console.log(formData);
+        handleCloseConfirmationDialog()
+    }
+
+    const handleConfirmIndeterminating = () => {
+        console.log('****************************************************************');
+        console.log('indeterminate confirm')
+        handleCloseConfirmationDialog()
     }
 
     const testSelection = (item) => {
@@ -226,7 +239,7 @@ const ExcepcionadasPage = (props) => {
                                         primary={<Typography variant="body2">{row.title}</Typography>} />
                                 </ListItemButton>
                         </ListItem>) */}
-                            {addressesData.map(row =>
+                            {addressesData.map((row, index) =>
 
                                 <ListItem dense disablePadding onClick={() => handleSearchItemClick(row)} style={testSelection(row) ? { backgroundColor: 'gray' } : {}}>
                                     {console.log('row._id', row._id)}
@@ -235,7 +248,7 @@ const ExcepcionadasPage = (props) => {
                                     {console.log('selectedDirection?._id', selectedDirection)}
                                     <ListItemButton>
                                         <ListItemText
-                                            primary={<Typography variant="body2">{row.formatted_address}</Typography>} />
+                                            primary={<Typography variant="body2" style={index === 0 ? { color: '#e20000' } : {}}>{row.formatted_address}</Typography>} />
                                     </ListItemButton>
                                 </ListItem>)}
                         </List>
@@ -255,15 +268,19 @@ const ExcepcionadasPage = (props) => {
                                 </div>}
                         </Col>
                         <Col>
-                            <MapDataForm data={selectedDirection} handleInfoChanged={handleInfoChanged} openSaveConfirmation={handleOpenConfirmationDialog} />
+                            <MapDataForm
+                                data={selectedDirection}
+                                handleInfoChanged={handleInfoChanged}
+                                openSaveConfirmation={handleOpenSaveConfirmationDialog}
+                                openIndeterminateConfirmation={handleOpenIndeterminateConfirmationDialog} />
                         </Col>
                     </Row>
                 </Container>
                 <Dialog
                     fullWidth
                     maxWidth="sm"
-                    open={isOpenConfirmation}
-                    onClose={() => setIsOpenConfirmation(false)}
+                    open={isOpenSaveConfirmation}
+                    onClose={handleCloseConfirmationDialog}
                     scroll='paper'
                     PaperComponent={() =>
                         ConfirmationDialog({
@@ -274,6 +291,25 @@ const ExcepcionadasPage = (props) => {
                             confirmButtonText: 'Sí Seguro',
                             cancelButtonText: 'Cancelar',
                             handleConfirmAction: handleConfirmSaving,
+                            handleCancelAction: handleCloseConfirmationDialog
+                        })}
+                    TransitionComponent={Zoom}
+                />
+                <Dialog
+                    fullWidth
+                    maxWidth="sm"
+                    open={isOpenIndeterminateConfirmation}
+                    onClose={handleCloseConfirmationDialog}
+                    scroll='paper'
+                    PaperComponent={() =>
+                        ConfirmationDialog({
+                            title: 'Confirmación',
+                            message: '¿Está seguro que esta dirección es indeterminada?',
+                            confirmButton: true,
+                            cancelButton: true,
+                            confirmButtonText: 'Sí Seguro',
+                            cancelButtonText: 'Cancelar',
+                            handleConfirmAction: handleConfirmIndeterminating,
                             handleCancelAction: handleCloseConfirmationDialog
                         })}
                     TransitionComponent={Zoom}

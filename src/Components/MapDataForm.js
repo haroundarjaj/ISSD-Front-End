@@ -13,7 +13,7 @@ import { useParams } from 'react-router-dom';
 
 
 const MapDataForm = (props) => {
-    const { data, handleInfoChanged, isConsult, openSaveConfirmation } = props;
+    const { data, handleInfoChanged, isConsult, openSaveConfirmation, openIndeterminateConfirmation } = props;
 
     const [estadoNormalizacion, setEstadoNormalizacion] = useState('')
     const [tipo, setTipo] = useState(null)
@@ -31,7 +31,7 @@ const MapDataForm = (props) => {
 
     const { id } = useParams();
 
-    const onSubmit = () => {
+    const onSaveClick = () => {
         // this data needs some preparation before sending it to the server
         //console.log('aqui va la data',data);
         const formData = {
@@ -52,6 +52,10 @@ const MapDataForm = (props) => {
         }
         console.log(formData);
         openSaveConfirmation(formData);
+    }
+
+    const onIndeterminateClick = () => {
+        openIndeterminateConfirmation();
     }
 
     useEffect(() => {
@@ -406,10 +410,10 @@ const MapDataForm = (props) => {
                     </div>
                 </div>
                 {!isConsult && <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Button color="warning">
+                    <Button color="warning" onClick={onIndeterminateClick}>
                         Indeterminada
                     </Button>
-                    <Button color="primary" onClick={onSubmit}>
+                    <Button color="primary" onClick={onSaveClick}>
                         Guardar
                     </Button>
                 </div>}

@@ -118,7 +118,7 @@ function regeocoder(texto)
             },
             size: 5
         };
-        axios.get(`http://localhost:4444/api/consulta/`+id, {
+        axios.get(`http://localhost:9090/api/consulta/`+id, {
 
         }).then((res) => {
 			console.log(res.data)

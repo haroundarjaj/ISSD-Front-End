@@ -1,5 +1,5 @@
 import { Dialog, Slide } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Container, Button } from "reactstrap";
 import LoginForm from "../../Components/LoginForm";
 import MainDialog from "./MainDialog";
@@ -53,7 +53,7 @@ const MainPage = (props) => {
                         }}*/
                         onClick={() => {
                             const AUTH_TOKEN = localStorage.getItem('token');
-                            if(! AUTH_TOKEN || isExpired(AUTH_TOKEN)) {
+                            if (!AUTH_TOKEN || isExpired(AUTH_TOKEN)) {
                                 setOpenLoginDialog(true)
                             } else {
                                 setOpenMainDialog(true)

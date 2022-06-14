@@ -5,7 +5,7 @@ import { withStyles } from '@mui/styles';
 import { Breadcrumb, BreadcrumbItem, Container, Button } from 'reactstrap'
 import PaginationComponent from '../../Components/PaginationComponent';
 import axios from 'axios';
-import { openVPNApi } from '../../Config/apiUrl'
+import { backendAPI } from '../../Config/apiUrl'
 import AddressServices from '../../Services/AddressServices';
 
 
@@ -85,25 +85,25 @@ const SelectorPage = props => {
             size: 30
         };
 
-        axios.get(`http://localhost:9090/api/consulta`, {
+        axios.get(`${backendAPI}/api/consulta`, {
             params: {
                 source: JSON.stringify(query),
                 source_content_type: 'application/json'
             }
         }).then((res) => {
-            
-			console.log("-----------------------------------------------------------------------------------------------------------------")
+
+            console.log("-----------------------------------------------------------------------------------------------------------------")
             setCurrentPage(1);
             setLoading(false);
             console.log(res.data)
-			setDirecciones(res.data)
+            setDirecciones(res.data)
         })
 
 
-        AddressServices.getAll().then((res) => {
+        /* AddressServices.getAll().then((res) => {
             console.log(res)
             console.log(res.data)
-        })
+        }) */
 
 
         /* setTimeout(function () {
@@ -141,10 +141,10 @@ const SelectorPage = props => {
                                     {currentTableData.map((row, index) => (
                                         <TableRow hover key={index} onDoubleClick={() => handleOpenRow(row)}>
                                             <TableCell component="th" scope="row">
-											{row['ID_DOMICILIO_RNUM']}
+                                                {row['ID_DOMICILIO_RNUM']}
                                             </TableCell>
                                             <TableCell component="th" scope="row">
-                                                {row['SUBTITULO']+" "+row['CALLE']+" "+row['NUMERO']+" "+row['COLONIA']+" "+row['CIUDAD']+" "+row['ESTADO']}
+                                                {row['SUBTITULO'] + " " + row['CALLE'] + " " + row['NUMERO'] + " " + row['COLONIA'] + " " + row['CIUDAD'] + " " + row['ESTADO']}
                                             </TableCell>
                                             <TableCell align='right'>
                                                 <Button className="btn-simple btn-icon" size="sm" color="success"

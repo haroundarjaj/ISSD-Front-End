@@ -1,28 +1,27 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, Breadcrumb, BreadcrumbItem, Input, Row, Col } from 'reactstrap';
 import MapComponent from '../../Components/Map/MapComponent';
 import axios from 'axios';
-import { API } from '../../Config/apiUrl';
+import { backendAPI } from '../../Config/apiUrl';
 import { withStyles } from '@mui/styles';
-import { Dialog, Divider, List, ListItem, ListItemButton, ListItemText, Paper, Typography, Zoom } from '@mui/material';
+import { Dialog, List, ListItem, ListItemButton, ListItemText, Paper, Typography, Zoom } from '@mui/material';
 import { alpha } from "@mui/material";
 import MapDataForm from '../../Components/MapDataForm';
 import ConfirmationDialog from '../../Components/ConfirmationDialog';
-import { Map, GoogleApiWrapper } from 'google-maps-react';
-
 
 
 
 
 const options = {
-  method: 'GET',
-  url: 'https://google-maps-geocoding.p.rapidapi.com/geocode/json',
-  params: {latlng: '40.714224,-73.96145', language: 'en'},
-  headers: {
-    'X-RapidAPI-Key': 'AIzaSyDoLzHyM8TTL2LnInXa18HrrrdY2gG4CbE',
-    'X-RapidAPI-Host': 'google-maps-geocoding.p.rapidapi.com'
-  }
+    method: 'GET',
+    url: 'https://google-maps-geocoding.p.rapidapi.com/geocode/json',
+    params: { latlng: '40.714224,-73.96145', language: 'en' },
+    headers: {
+        'X-RapidAPI-Key': 'AIzaSyDoLzHyM8TTL2LnInXa18HrrrdY2gG4CbE',
+        'X-RapidAPI-Host': 'google-maps-geocoding.p.rapidapi.com'
+    }
 };
 
 const PaperStyled = withStyles(theme => ({
@@ -34,9 +33,8 @@ const PaperStyled = withStyles(theme => ({
         height: 117
     },
 }))(Paper);
- 
-//window.$texto = ""
-var $dir= ""
+
+var $dir = ""
 
 const listItems = [
     { title: 'Address 1', isfromServer: true },
@@ -60,6 +58,7 @@ const ExcepcionadasPage = (props) => {
         { _id: 'testid5', _source: { direccion_normalizada: 'address 5' } }
     ]);
     const [infoValue, setInfoValue] = useState('');
+    const [formData, setFormData] = useState(null);
 
     const zoom = 15;
 
@@ -76,40 +75,88 @@ const ExcepcionadasPage = (props) => {
     const handleInfoChanged = (value) => {
         setInfoValue(value);
     }
-function geocoder(dir){
-	axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=`+dir[0]['TERMINAL_LONGITUD']+`,`+dir[0]['TERMINAL_LATITUD']+`&key=AIzaSyDoLzHyM8TTL2LnInXa18HrrrdY2gG4CbE`, {
+
+    const handleOpenConfirmationDialog = (data) => {
+        setFormData(data);
+        setIsOpenConfirmation(true)
+    }
+
+    const handleCloseConfirmationDialog = () => {
+        setFormData(null);
+        setIsOpenConfirmation(false)
+    }
+
+    const handleConfirmSaving = () => {
+        console.log('****************************************************************');
+        console.log('formData')
+        console.log(formData);
+    }
+
+    const testSelection = (item) => {
+        let isSelected = false;
+        if (selectedDirection) {
+            if (item && item.address_components) {
+                if (item.place_id === selectedDirection?.place_id) {
+                    isSelected = true;
+                }
+            } else {
+                if (item._id === selectedDirection?._id) {
+                    isSelected = true;
+                }
+            }
+        }
+        return isSelected;
+    }
+
+    const getLocationCoord = () => {
+        if (selectedDirection) {
+            if (selectedDirection.address_components) {
+                console.log(selectedDirection)
+                return {
+                    lat: parseFloat(selectedDirection.geometry.location.lat),
+                    lng: parseFloat(selectedDirection.geometry.location.lng)
+                }
+            } else {
+                console.log(selectedDirection)
+                return {
+                    lat: parseFloat(selectedDirection._source.latitud),
+                    lng: parseFloat(selectedDirection._source.longitud)
+                }
+            }
+        }
+        return { lat: parseFloat(0.0), lng: parseFloat(0.0) };
+    }
+
+    function geocoder(dir) {
+        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=` + dir[0]['TERMINAL_LONGITUD'] + `,` + dir[0]['TERMINAL_LATITUD'] + `&key=AIzaSyDoLzHyM8TTL2LnInXa18HrrrdY2gG4CbE`, {
 
         }).then((res) => {
-			console.log(res.data.results)
-			setSelectedDirection(res.data.results[0])
-			var rr = [0]
-			rr  = res.data.results
-			console.log(rr)
-			delete rr[rr.length-1]
-			delete rr[rr.length-2]
-			setAddressesData(rr)
-			console.log("---------------------------------",rr.length)
-			console.log(rr[0])
+            console.log(res.data.results)
+            setSelectedDirection(res.data.results[0])
+            var rr = [0]
+            rr = res.data.results
+            console.log(rr)
+            delete rr[rr.length - 1]
+            delete rr[rr.length - 2]
+            setAddressesData(rr)
+            console.log("---------------------------------", rr.length)
+            console.log(rr[0])
         })
-}
-function regeocoder(texto)
-{
-			axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=`+texto+`&key=AIzaSyDoLzHyM8TTL2LnInXa18HrrrdY2gG4CbE`, {
+    }
+    function regeocoder(texto) {
+        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=` + texto + `&key=AIzaSyDoLzHyM8TTL2LnInXa18HrrrdY2gG4CbE`, {
 
         }).then((res) => {
-			console.log(res.data.results)
-			setSelectedDirection(res.data.results[0])
-			setAddressesData(res.data.results)
+            console.log(res.data.results)
+            setSelectedDirection(res.data.results[0])
+            setAddressesData(res.data.results)
         })
-		
-		
-}
-	
+
+
+    }
+
 
     useEffect(() => {
-		
-		
-		
         const query = {
             query: {
                 match: {
@@ -118,22 +165,22 @@ function regeocoder(texto)
             },
             size: 5
         };
-        axios.get(`http://localhost:9090/api/consulta/`+id, {
+        axios.get(`${backendAPI}/api/consulta/` + id, {
 
         }).then((res) => {
-			console.log(res.data)
+            console.log(res.data)
             //setSelectedDirection(res.data[0])
             console.log(res.data[0]['ID_DOMICILIO_RNUM'])
-			{var texto = res.data[0]['SUBTITULO']+" "+res.data[0]['CALLE']+" "+res.data[0]['NUMERO']+" "+res.data[0]['CIUDAD']+" "+res.data[0]['ESTADO']}
-			window.texto =texto = res.data[0]['SUBTITULO']+" "+res.data[0]['CALLE']+" "+res.data[0]['NUMERO']+" "+res.data[0]['CIUDAD']+" "+res.data[0]['ESTADO']
-			 //regeocoder(texto)
-			 geocoder(res.data)
-			 
-			
+            // { var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO'] }
+            // window.texto = texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
+            //regeocoder(texto)
+            geocoder(res.data)
+
+
         })
-		//-----------------------------------
-		
-		//------------------------------------
+        //-----------------------------------
+
+        //------------------------------------
     }, []);
     console.log(props)
 
@@ -160,7 +207,7 @@ function regeocoder(texto)
                         type="text"
                         name="info"
                         id="info-input"
-                        value={window.texto}
+                        value={infoValue}
                     />
                     <PaperStyled>
                         <List>
@@ -180,7 +227,12 @@ function regeocoder(texto)
                                 </ListItemButton>
                         </ListItem>) */}
                             {addressesData.map(row =>
-                                <ListItem dense disablePadding onClick={() => handleSearchItemClick(row)} style={row._id === selectedDirection?._id ? { backgroundColor: 'gray' } : {}}>
+
+                                <ListItem dense disablePadding onClick={() => handleSearchItemClick(row)} style={testSelection(row) ? { backgroundColor: 'gray' } : {}}>
+                                    {console.log('row._id', row._id)}
+                                    {console.log('selectedDirection?._id', selectedDirection?._id)}
+                                    {console.log('row._id', row)}
+                                    {console.log('selectedDirection?._id', selectedDirection)}
                                     <ListItemButton>
                                         <ListItemText
                                             primary={<Typography variant="body2">{row.formatted_address}</Typography>} />
@@ -192,7 +244,7 @@ function regeocoder(texto)
                     <Row>
                         <Col>
                             {selectedDirection ?
-                                <MapComponent location={{ lat: parseFloat(0.0), lng: parseFloat(0.0) }} zoom={zoom} handleDragEndMarker={handleDragEndMarker} />
+                                <MapComponent location={getLocationCoord()} zoom={zoom} handleDragEndMarker={handleDragEndMarker} />
                                 : <div style={{ width: '100%', height: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                                     Loading Map...
                                     <img
@@ -203,7 +255,7 @@ function regeocoder(texto)
                                 </div>}
                         </Col>
                         <Col>
-                            <MapDataForm data={selectedDirection} handleInfoChanged={handleInfoChanged} openSaveConfirmation={setIsOpenConfirmation} />
+                            <MapDataForm data={selectedDirection} handleInfoChanged={handleInfoChanged} openSaveConfirmation={handleOpenConfirmationDialog} />
                         </Col>
                     </Row>
                 </Container>
@@ -221,8 +273,8 @@ function regeocoder(texto)
                             cancelButton: true,
                             confirmButtonText: 'Sí Seguro',
                             cancelButtonText: 'Cancelar',
-                            handleConfirmAction: () => setIsOpenConfirmation(false),
-                            handleCancelAction: () => setIsOpenConfirmation(false)
+                            handleConfirmAction: handleConfirmSaving,
+                            handleCancelAction: handleCloseConfirmationDialog
                         })}
                     TransitionComponent={Zoom}
                 />

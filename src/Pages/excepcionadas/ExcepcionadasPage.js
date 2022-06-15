@@ -12,19 +12,18 @@ import MapDataForm from '../../Components/MapDataForm';
 import ConfirmationDialog from '../../Components/ConfirmationDialog';
 
 
-function lxml()
-{
-	var rawFile = new XMLHttpRequest();
-rawFile.open("GET", 'configuracion.xml', false);
-rawFile.onreadystatechange = () => {
-    if (rawFile.readyState === 4) {
-        if (rawFile.status === 200 || rawFile.status == 0) {
-            var xmlasstring = rawFile.responseText;
-            console.log('Your xml file as string', xmlasstring)
+function lxml() {
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", 'configuracion.xml', false);
+    rawFile.onreadystatechange = () => {
+        if (rawFile.readyState === 4) {
+            if (rawFile.status === 200 || rawFile.status == 0) {
+                var xmlasstring = rawFile.responseText;
+                console.log('Your xml file as string', xmlasstring)
+            }
         }
+        console.log(rawFile.responseTex)
     }
-	console.log(rawFile.responseTex)
-}
 }
 
 const options = {
@@ -73,16 +72,18 @@ const ExcepcionadasPage = (props) => {
     ]);
     const [infoValue, setInfoValue] = useState('');
     const [formData, setFormData] = useState(null);
+    const [markerCoord, setMarkerCoord] = useState(null);
 
     const zoom = 15;
 
-    const handleDragEndMarker = (address) => {
-        console.log(address)
-        setSelectedDirection(address);
+    const handleDragEndMarker = (coord) => {
+        console.log(coord)
+        setMarkerCoord(coord)
     }
 
     const handleSearchItemClick = item => {
         setSelectedDirection(item)
+        setMarkerCoord(null)
     }
 
 
@@ -109,84 +110,77 @@ const ExcepcionadasPage = (props) => {
         console.log('****************************************************************');
         console.log('formData')
         console.log(formData);
-		console.log('le diste en guardar')
-		axios.get(`http://localhost:9090/api/consulta/` + id, {
+        console.log('le diste en guardar')
+        axios.get(`${backendAPI}/api/consulta/` + id, {
 
         }).then((res) => {
             //console.log(res.data)
             //setSelectedDirection(res.data[0])
             //console.log(res.data[0]['ID_DOMICILIO_RNUM'])
-            { var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO'] }
-            window.texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
-			setInfoValue(texto)
+            var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
+            setInfoValue(texto)
             //regeocoder(texto)
             window.$resp = res;
-		console.log(window.$resp)
+            console.log(window.$resp)
 
         })
-		console.log(window.$resp.data[0])
-		var cambio="";
-		if(window.$resp.data[0]['ESTADO']!=formData.lestado.toUpperCase())
-		{
-			cambio=cambio+"E"
-			console.log(window.$resp['ESTADO']+" "+formData.lestado.toUpperCase())
-		}
-		if(window.$resp.data[0]['CIUDAD']!=formData.elmuni.toUpperCase())
-		{
-			cambio=cambio+"C"
-		}
-		if(window.$resp.data[0]['COLONIA']!=formData.lcolonia.toUpperCase())
-		{
-			cambio=cambio+"B"
-		}
-		if(window.$resp.data[0]['TERMINAL_LATITUD']!=formData.llat||window.$resp.data[0]['TERMINAL_LONGITUD']!=formData.llng)
-		{
-			cambio=cambio+"L"
-		}
-		if(window.$resp.data[0]['CODIGO_POSTAL']!=formData.lpostal.toUpperCase())
-		{
-			cambio=cambio+"P"
-		}
-		if(window.$resp.data[0]['CALLE']!=formData.lcalle.toUpperCase())
-		{
-			cambio=cambio+"S"
-		}
-		
-		
-		console.log(cambio)
-		console.log(formData)
-				axios.post(`${backendAPI}/api/actualiza/`+id,null,{
-				   params :{
-					'estado':formData.lestado.toUpperCase(),
-				   'ciudad':formData.elmuni.toUpperCase(),
-				   'municipio':formData.elmuni.toUpperCase(),
-				   'colonia':formData.lcolonia.toUpperCase(),
-				   'tcalle':formData.tipoCalle.toUpperCase(),
-				   'calle':formData.lcalle.toUpperCase(),
-				   'numero':formData.lnumero.toUpperCase(),
-				   'codigo_postal':formData.lpostal.toUpperCase(),
-				   'lat':formData.llat,
-				   'lng':formData.llng,
-				   'codigo':cambio
-					}
-				}).then((res) => {
-			console.log(res);
-			alert('Registro actualizado correctamente')
-});
+        console.log(window.$resp.data[0])
+        var cambio = "";
+        if (window.$resp.data[0]['ESTADO'] != formData.lestado.toUpperCase()) {
+            cambio = cambio + "E"
+            console.log(window.$resp['ESTADO'] + " " + formData.lestado.toUpperCase())
+        }
+        if (window.$resp.data[0]['CIUDAD'] != formData.elmuni.toUpperCase()) {
+            cambio = cambio + "C"
+        }
+        if (window.$resp.data[0]['COLONIA'] != formData.lcolonia.toUpperCase()) {
+            cambio = cambio + "B"
+        }
+        if (window.$resp.data[0]['TERMINAL_LATITUD'] != formData.llat || window.$resp.data[0]['TERMINAL_LONGITUD'] != formData.llng) {
+            cambio = cambio + "L"
+        }
+        if (window.$resp.data[0]['CODIGO_POSTAL'] != formData.lpostal.toUpperCase()) {
+            cambio = cambio + "P"
+        }
+        if (window.$resp.data[0]['CALLE'] != formData.lcalle.toUpperCase()) {
+            cambio = cambio + "S"
+        }
+
+
+        console.log(cambio)
+        console.log(formData)
+        axios.post(`${backendAPI}/api/actualiza/` + id, null, {
+            params: {
+                'estado': formData.lestado.toUpperCase(),
+                'ciudad': formData.elmuni.toUpperCase(),
+                'municipio': formData.elmuni.toUpperCase(),
+                'colonia': formData.lcolonia.toUpperCase(),
+                'tcalle': formData.tipoCalle.toUpperCase(),
+                'calle': formData.lcalle.toUpperCase(),
+                'numero': formData.lnumero.toUpperCase(),
+                'codigo_postal': formData.lpostal.toUpperCase(),
+                'lat': formData.llat,
+                'lng': formData.llng,
+                'codigo': cambio
+            }
+        }).then((res) => {
+            console.log(res);
+            alert('Registro actualizado correctamente')
+        });
         handleCloseConfirmationDialog()
     }
 
     const handleConfirmIndeterminating = () => {
         console.log('****************************************************************');
         console.log('indeterminate confirm')
-		axios.put(`http://localhost:9090/api/indetermina/` + id, {
-			query: {
-						}
-					}).then((res) => {
-					console.log(res);
-					alert("SE ha intedetminado correctamente")
-			console.log("registro actualizado correctamente")
-});
+        axios.put(`${backendAPI}/api/indetermina/` + id, {
+            query: {
+            }
+        }).then((res) => {
+            console.log(res);
+            alert("SE ha intedetminado correctamente")
+            console.log("registro actualizado correctamente")
+        });
         handleCloseConfirmationDialog()
     }
 
@@ -231,12 +225,13 @@ const ExcepcionadasPage = (props) => {
         }).then((res) => {
             console.log(res.data.results)
             setSelectedDirection(res.data.results[0])
+            setMarkerCoord(null)
             var rr = [0]
             rr = res.data.results
             console.log(rr)
             delete rr[rr.length - 1]
             delete rr[rr.length - 2]
-			delete rr[rr.length - 3]
+            delete rr[rr.length - 3]
             delete rr[rr.length - 4]
             setAddressesData(rr)
             //console.log("---------------------------------", rr.length)
@@ -249,6 +244,7 @@ const ExcepcionadasPage = (props) => {
         }).then((res) => {
             console.log(res.data.results)
             setSelectedDirection(res.data.results[0])
+            setMarkerCoord(null)
             setAddressesData(res.data.results)
         })
 
@@ -265,28 +261,28 @@ const ExcepcionadasPage = (props) => {
             },
             size: 5
         };
-        axios.get(`http://localhost:4444/api/consulta/` + id, {
+        axios.get(`${backendAPI}/api/consulta/` + id, {
 
         }).then((res) => {
             //console.log(res.data)
             //setSelectedDirection(res.data[0])
             //console.log(res.data[0]['ID_DOMICILIO_RNUM'])
-            { var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO'] }
-            window.texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
+            var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
+            setInfoValue(texto)
             //regeocoder(texto)
             geocoder(res.data)
 
 
         })
         //-----------------------------------
-		console.log("------------------------------------------------------------------------")
-		axios.get("/xml/configuracion.xml", {
-   "Content-Type": "application/xml; charset=utf-8"
-})
-.then((response) => {
-   console.log('Your xml file as string', response.data);
-});
-console.log("-------------------------------------------------------------------------------")
+        console.log("------------------------------------------------------------------------")
+        axios.get("/xml/configuracion.xml", {
+            "Content-Type": "application/xml; charset=utf-8"
+        })
+            .then((response) => {
+                console.log('Your xml file as string', response.data);
+            });
+        console.log("-------------------------------------------------------------------------------")
         //------------------------------------
     }, []);
     //console.log(MapComponent)
@@ -314,7 +310,7 @@ console.log("-------------------------------------------------------------------
                         type="text"
                         name="info"
                         id="info-input"
-                        value={window.texto}
+                        value={infoValue}
                     />
                     <PaperStyled>
                         <List>
@@ -342,7 +338,7 @@ console.log("-------------------------------------------------------------------
                                     {//console.log('selectedDirection?._id', selectedDirection)*/}
                                     <ListItemButton>
                                         <ListItemText
-                                            primary={<Typography variant="body2" style={(index === 0 || index===1|| index===2) ? { color: '#e20000' } : {}}>{row.formatted_address}</Typography>} />
+                                            primary={<Typography variant="body2" style={(index === 0 || index === 1 || index === 2) ? { color: '#e20000' } : {}}>{row.formatted_address}</Typography>} />
                                     </ListItemButton>
                                 </ListItem>)}
                         </List>
@@ -351,7 +347,7 @@ console.log("-------------------------------------------------------------------
                     <Row>
                         <Col>
                             {selectedDirection ?
-                                <MapComponent location={getLocationCoord()} zoom={zoom} handleDragEndMarker={handleDragEndMarker} />
+                                <MapComponent location={markerCoord ? markerCoord : getLocationCoord()} zoom={zoom} handleDragEndMarker={handleDragEndMarker} />
                                 : <div style={{ width: '100%', height: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                                     Loading Map...
                                     <img
@@ -366,7 +362,9 @@ console.log("-------------------------------------------------------------------
                                 data={selectedDirection}
                                 handleInfoChanged={handleInfoChanged}
                                 openSaveConfirmation={handleOpenSaveConfirmationDialog}
-                                openIndeterminateConfirmation={handleOpenIndeterminateConfirmationDialog} />
+                                openIndeterminateConfirmation={handleOpenIndeterminateConfirmationDialog}
+                                markerCoord={markerCoord}
+                            />
                         </Col>
                     </Row>
                 </Container>

@@ -19,13 +19,14 @@ const MapComponent = (props) => {
     const [map, setMap] = React.useState(null);
     const [center, setCenter] = React.useState(null);
 
-    /*useMemo(() => {
+    useMemo(() => {
         setCenter({ lat: location.lat, lng: location.lng });
-    }, [location]);*/
+    }, [location]);
 
     const onDragEndMarker = (e) => {
         //setCenter(e.latLng)
-        const geocoder = new window.google.maps.Geocoder();
+        handleDragEndMarker(e.latLng)
+        /* const geocoder = new window.google.maps.Geocoder();
         geocoder.geocode({ latLng: e.latLng })
             .then((response) => {
                 const { results } = response
@@ -150,7 +151,7 @@ const MapComponent = (props) => {
 
                     }
                 })
-            })
+            }) */
     }
 
     const onLoad = React.useCallback(function callback(map) {
@@ -193,11 +194,12 @@ const MapComponent = (props) => {
             onUnmount={onUnmount}
         >
             { /* Child components, such as markers, info windows, etc. */}
-            {(isConsult && JSON.stringify(center) === JSON.stringify({ lat: 0, lng: 0 })) ? <></> : <Marker
-                position={center || location}
-                draggable
-                onDragEnd={onDragEndMarker}
-            />}
+            {(isConsult && JSON.stringify(center) === JSON.stringify({ lat: 0, lng: 0 })) ? <></>
+                : <Marker
+                    position={center || location}
+                    draggable={!isConsult}
+                    onDragEnd={onDragEndMarker}
+                />}
         </GoogleMap>
     ) : <></>
 }

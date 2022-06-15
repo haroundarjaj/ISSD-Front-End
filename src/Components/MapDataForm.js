@@ -9,12 +9,20 @@ import {
 } from 'reactstrap';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { backendAPI } from '../Config/apiUrl';
 
 
 
 
 const MapDataForm = (props) => {
-    const { data, handleInfoChanged, isConsult, openSaveConfirmation, openIndeterminateConfirmation } = props;
+    const {
+        data,
+        handleInfoChanged,
+        isConsult,
+        openSaveConfirmation,
+        openIndeterminateConfirmation,
+        markerCoord
+    } = props;
 
     const [estadoNormalizacion, setEstadoNormalizacion] = useState('')
     const [tipo, setTipo] = useState(null)
@@ -60,10 +68,17 @@ const MapDataForm = (props) => {
     }
 
     useEffect(() => {
+        if (markerCoord) {
+            setLlat(markerCoord.lat)
+            setLlng(markerCoord.lng)
+        }
+    }, [markerCoord])
+
+    useEffect(() => {
         window.$dirnorm = tipoCalle + " " + lcalle + " " + lnumero + " " + lcolonia + " " + lpostal + " " + elmuni + " " + lestado;
         console.log('dirnorm', window.$dirnorm)
         handleInfoChanged(window.$dirnorm);
-		console.log(tipoCalle)
+        console.log(tipoCalle)
     }, [tipoCalle, lcalle, lnumero, lcolonia, lpostal, elmuni, lestado])
 
     useEffect(() => {
@@ -75,7 +90,7 @@ const MapDataForm = (props) => {
         var lestado1 = "";
         var llat1 = "";
         var llng1 = "";
-		var nivel_tipo_calle =""
+        var nivel_tipo_calle = ""
 
         console.log(data)
 
@@ -130,59 +145,59 @@ const MapDataForm = (props) => {
             var formato = data.formatted_address.split(",");
             //console.log(formato[formato.length-4])
             //console.log(formato)
-			 nivel_tipo_calle = null;
-                var ncalle = null;
-                if (lcalle.includes("Avenida")) {
-                    nivel_tipo_calle = "Avenida";
-                    ncalle = lcalle
-                    lcalle = ncalle.slice(8)
-                } else if (lcalle.includes("Calle")) {
-                    nivel_tipo_calle = "Calle";
-                    ncalle = lcalle
-                    lcalle = ncalle.slice(6)
-                } else if (lcalle.includes("Callejón")) {
-                    nivel_tipo_calle = "Callejón";
-                    ncalle = lcalle
-                    lcalle = ncalle.slice(8)
-                } else if (lcalle.includes("Prolongacion")) {
-                    nivel_tipo_calle = "Prolongacion";
-                    ncalle = lcalle
-                    lcalle = ncalle.slice(13)
-                } else if (lcalle.includes("Prolongación")) {
-                    nivel_tipo_calle = "Prolongación";
-                    ncalle = lcalle
-                    lcalle = ncalle.slice(13)
-                } else if (lcalle.includes("Callejon")) {
-                    nivel_tipo_calle = "Callejon";
-                    ncalle = lcalle
-                    lcalle = ncalle.slice(8)
-                } else if (lcalle.includes("Andador")) {
-                    nivel_tipo_calle = "Andador";
-                    ncalle = lcalle
-                    lcalle = ncalle.slice(8)
-                } else if (lcalle.includes("Carretera")) {
-                    nivel_tipo_calle = "Carretera";
-                    ncalle = lcalle
-                    lcalle = ncalle.slice(10)
-                } else if (lcalle.includes("Viaducto")) {
-                    nivel_tipo_calle = "Viaducto";
-                    ncalle = lcalle
-                    lcalle = ncalle.slice(9)
-                } else if (lcalle.includes("Autopista")) {
-                    nivel_tipo_calle = "Autopista";
-                    ncalle = lcalle
-                    lcalle = ncalle.slice(10)
-                } else if (lcalle.includes("Calzada")) {
-                    nivel_tipo_calle = "Calzada";
-                    ncalle = lcalle
-                    lcalle = ncalle.slice(8)
-                } else if (lcalle.includes("Cerrada")) {
-                    nivel_tipo_calle = "Cerrada";
-                } else if (lcalle.includes("Boulevard")) {
-                    nivel_tipo_calle = "Boulevard";
-                } else {
-                    nivel_tipo_calle = "";
-                }
+            nivel_tipo_calle = null;
+            var ncalle = null;
+            if (lcalle.includes("Avenida")) {
+                nivel_tipo_calle = "Avenida";
+                ncalle = lcalle
+                lcalle1 = ncalle.slice(8)
+            } else if (lcalle.includes("Calle")) {
+                nivel_tipo_calle = "Calle";
+                ncalle = lcalle
+                lcalle1 = ncalle.slice(6)
+            } else if (lcalle.includes("Callejón")) {
+                nivel_tipo_calle = "Callejón";
+                ncalle = lcalle
+                lcalle1 = ncalle.slice(8)
+            } else if (lcalle.includes("Prolongacion")) {
+                nivel_tipo_calle = "Prolongacion";
+                ncalle = lcalle
+                lcalle1 = ncalle.slice(13)
+            } else if (lcalle.includes("Prolongación")) {
+                nivel_tipo_calle = "Prolongación";
+                ncalle = lcalle
+                lcalle1 = ncalle.slice(13)
+            } else if (lcalle.includes("Callejon")) {
+                nivel_tipo_calle = "Callejon";
+                ncalle = lcalle
+                lcalle1 = ncalle.slice(8)
+            } else if (lcalle.includes("Andador")) {
+                nivel_tipo_calle = "Andador";
+                ncalle = lcalle
+                lcalle1 = ncalle.slice(8)
+            } else if (lcalle.includes("Carretera")) {
+                nivel_tipo_calle = "Carretera";
+                ncalle = lcalle
+                lcalle1 = ncalle.slice(10)
+            } else if (lcalle.includes("Viaducto")) {
+                nivel_tipo_calle = "Viaducto";
+                ncalle = lcalle
+                lcalle1 = ncalle.slice(9)
+            } else if (lcalle.includes("Autopista")) {
+                nivel_tipo_calle = "Autopista";
+                ncalle = lcalle
+                lcalle1 = ncalle.slice(10)
+            } else if (lcalle.includes("Calzada")) {
+                nivel_tipo_calle = "Calzada";
+                ncalle = lcalle
+                lcalle1 = ncalle.slice(8)
+            } else if (lcalle.includes("Cerrada")) {
+                nivel_tipo_calle = "Cerrada";
+            } else if (lcalle.includes("Boulevard")) {
+                nivel_tipo_calle = "Boulevard";
+            } else {
+                nivel_tipo_calle = "";
+            }
 
             if (elmuni1 == null) {
                 elmuni1 = formato[formato.length - 4]
@@ -192,36 +207,36 @@ const MapDataForm = (props) => {
             llng1 = data['geometry'].location.lng;
         }
         else if (data != null) {
-			axios.get(`http://localhost:9090/api/consulta/` + id, {
+            axios.get(`${backendAPI}/api/consulta/` + id, {
 
-        }).then((res) => {
-            //console.log(res.data)
-            //setSelectedDirection(res.data[0])
-            //console.log(res.data[0]['ID_DOMICILIO_RNUM'])
-            { var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO'] }
-            window.texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
-			window.tcalle =res.data[0]['SUBTITULO'];
-			window.calle =res.data[0]['CALLE'] 
-			window.numero = res.data[0]['NUMERO']
-			window.ciudad = res.data[0]['CIUDAD']
-			window.estado = res.data[0]['ESTADO']
-			window.colonia = res.data[0]['COLONIA']
-			window.postal = res.data[0]['CODIGO_POSTAL']
+            }).then((res) => {
+                //console.log(res.data)
+                //setSelectedDirection(res.data[0])
+                //console.log(res.data[0]['ID_DOMICILIO_RNUM'])
+                var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
+                handleInfoChanged(texto);
+                window.tcalle = res.data[0]['SUBTITULO'];
+                window.calle = res.data[0]['CALLE']
+                window.numero = res.data[0]['NUMERO']
+                window.ciudad = res.data[0]['CIUDAD']
+                window.estado = res.data[0]['ESTADO']
+                window.colonia = res.data[0]['COLONIA']
+                window.postal = res.data[0]['CODIGO_POSTAL']
 
-        })
+            })
             console.log(data._source)
             lestado1 = window.estado
             elmuni1 = window.window.ciudad
             lcolonia1 = window.colonia
-			nivel_tipo_calle = window.tcalle
+            nivel_tipo_calle = window.tcalle
             lcalle1 = window.calle
             lnumero1 = window.numero
             lpostal1 = window.postal
             llat1 = data._source.latitud;
             llng1 = data._source.longitud;
-			//setTipoCalle(ltipocalle)
+            //setTipoCalle(ltipocalle)
         }
-		console.log(nivel_tipo_calle)
+        console.log(nivel_tipo_calle)
         setLestado(lestado1)
         setElmuni(elmuni1)
         setLcolonia(lcolonia1)
@@ -230,7 +245,7 @@ const MapDataForm = (props) => {
         setLpostal(lpostal1)
         setLlat(llat1)
         setLlng(llng1)
-		setTipoCalle(nivel_tipo_calle)
+        setTipoCalle(nivel_tipo_calle)
 
         console.log(elmuni1)
         console.log(lestado1)
@@ -244,7 +259,7 @@ const MapDataForm = (props) => {
 
 
 
-	console.log(tipoCalle)
+    console.log(tipoCalle)
 
     //------------------------------------------------------
     return (

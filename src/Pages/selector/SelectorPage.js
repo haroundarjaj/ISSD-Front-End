@@ -6,7 +6,6 @@ import { Breadcrumb, BreadcrumbItem, Container, Button } from 'reactstrap'
 import PaginationComponent from '../../Components/PaginationComponent';
 import axios from 'axios';
 import { backendAPI } from '../../Config/apiUrl'
-import AddressServices from '../../Services/AddressServices';
 
 
 /* const rows = [

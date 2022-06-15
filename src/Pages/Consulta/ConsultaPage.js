@@ -44,6 +44,7 @@ const ConsultaPage = (props) => {
     }
 
     const handleSearchItemClick = item => {
+        console.log(item)
         setSelectedDirection(item)
         setZoom(15);
     }
@@ -108,6 +109,10 @@ const ConsultaPage = (props) => {
         }) */
     }, []);
     console.log(props)
+    console.log('***************************************************')
+    console.log(selectedDirection ?
+        { lat: parseFloat(selectedDirection?._source.latitud), lng: parseFloat(selectedDirection?._source.longitud) }
+        : { lat: 0.00, lng: 0.00 })
     return (
         <>
             <div className="section section-typo">

@@ -8,6 +8,7 @@ import {
     CardBody
 } from 'reactstrap';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 
 
@@ -191,14 +192,31 @@ const MapDataForm = (props) => {
             llng1 = data['geometry'].location.lng;
         }
         else if (data != null) {
+			axios.get(`http://localhost:9090/api/consulta/` + id, {
+
+        }).then((res) => {
+            //console.log(res.data)
+            //setSelectedDirection(res.data[0])
+            //console.log(res.data[0]['ID_DOMICILIO_RNUM'])
+            { var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO'] }
+            window.texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
+			window.tcalle =res.data[0]['SUBTITULO'];
+			window.calle =res.data[0]['CALLE'] 
+			window.numero = res.data[0]['NUMERO']
+			window.ciudad = res.data[0]['CIUDAD']
+			window.estado = res.data[0]['ESTADO']
+			window.colonia = res.data[0]['COLONIA']
+			window.postal = res.data[0]['CODIGO_POSTAL']
+
+        })
             console.log(data._source)
-            lestado1 = data._source.nivel_1
-            elmuni1 = data._source.nivel_2
-            lcolonia1 = data._source.nivel_3
-			nivel_tipo_calle = data._source.nivel_4
-            lcalle1 = data._source.nivel_5
-            lnumero1 = data._source.nivel_6
-            lpostal1 = data._source.nivel_7
+            lestado1 = window.estado
+            elmuni1 = window.window.ciudad
+            lcolonia1 = window.colonia
+			nivel_tipo_calle = window.tcalle
+            lcalle1 = window.calle
+            lnumero1 = window.numero
+            lpostal1 = window.postal
             llat1 = data._source.latitud;
             llng1 = data._source.longitud;
 			//setTipoCalle(ltipocalle)

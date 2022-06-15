@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Container, Breadcrumb, BreadcrumbItem, Input, Row, Col } from 'reactstrap';
 import MapComponent from '../../Components/Map/MapComponent';
 import axios from 'axios';
-import { openVPNApi } from '../../Config/apiUrl';
+import { API } from '../../Config/apiUrl';
 import { withStyles } from '@mui/styles';
 import { List, ListItem, ListItemButton, ListItemText, Paper, Typography } from '@mui/material';
 import { alpha } from "@mui/material";
@@ -63,11 +63,6 @@ const ConsultaPage = (props) => {
                                 match_phrase: {
                                     "direccion_normalizada": value
                                 }
-                            },
-                            {
-                                match: {
-                                    "tipo": "excepcionada"
-                                }
                             }
                         ]
                     }
@@ -102,7 +97,7 @@ const ConsultaPage = (props) => {
             },
             size: 5
         };
-        axios.get(`${openVPNApi}/direcciones/_search`, {
+        axios.get(`${API}/direcciones/_search`, {
             params: {
                 source: JSON.stringify(query),
                 source_content_type: 'application/json'

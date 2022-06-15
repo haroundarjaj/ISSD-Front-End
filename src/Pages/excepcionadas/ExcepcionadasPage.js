@@ -12,7 +12,20 @@ import MapDataForm from '../../Components/MapDataForm';
 import ConfirmationDialog from '../../Components/ConfirmationDialog';
 
 
-
+function lxml()
+{
+	var rawFile = new XMLHttpRequest();
+rawFile.open("GET", 'configuracion.xml', false);
+rawFile.onreadystatechange = () => {
+    if (rawFile.readyState === 4) {
+        if (rawFile.status === 200 || rawFile.status == 0) {
+            var xmlasstring = rawFile.responseText;
+            console.log('Your xml file as string', xmlasstring)
+        }
+    }
+	console.log(rawFile.responseTex)
+}
+}
 
 const options = {
     method: 'GET',
@@ -96,12 +109,83 @@ const ExcepcionadasPage = (props) => {
         console.log('****************************************************************');
         console.log('formData')
         console.log(formData);
+		console.log('le diste en guardar')
+		axios.get(`http://localhost:4444/api/consulta/` + id, {
+
+        }).then((res) => {
+            //console.log(res.data)
+            //setSelectedDirection(res.data[0])
+            //console.log(res.data[0]['ID_DOMICILIO_RNUM'])
+            // { var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO'] }
+            // window.texto = texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
+            //regeocoder(texto)
+            window.$resp = res;
+		console.log(window.$resp)
+
+        })
+		console.log(window.$resp.data[0])
+		var cambio="";
+		if(window.$resp.data[0]['ESTADO']!=formData.lestado.toUpperCase())
+		{
+			cambio=cambio+"E"
+			console.log(window.$resp['ESTADO']+" "+formData.lestado.toUpperCase())
+		}
+		if(window.$resp.data[0]['CIUDAD']!=formData.elmuni.toUpperCase())
+		{
+			cambio=cambio+"C"
+		}
+		if(window.$resp.data[0]['COLONIA']!=formData.lcolonia.toUpperCase())
+		{
+			cambio=cambio+"B"
+		}
+		if(window.$resp.data[0]['TERMINAL_LATITUD']!=formData.llat||window.$resp.data[0]['TERMINAL_LONGITUD']!=formData.llng)
+		{
+			cambio=cambio+"L"
+		}
+		if(window.$resp.data[0]['CODIGO_POSTAL']!=formData.lpostal.toUpperCase())
+		{
+			cambio=cambio+"P"
+		}
+		if(window.$resp.data[0]['CALLE']!=formData.lcalle.toUpperCase())
+		{
+			cambio=cambio+"S"
+		}
+		
+		
+		console.log(cambio)
+		console.log(formData)
+				axios.post(`${backendAPI}/api/actualiza/`+id,null,{
+				   params :{
+					'estado':formData.lestado.toUpperCase(),
+				   'ciudad':formData.elmuni.toUpperCase(),
+				   'municipio':formData.elmuni.toUpperCase(),
+				   'colonia':formData.lcolonia.toUpperCase(),
+				   'tcalle':formData.tipoCalle.toUpperCase(),
+				   'calle':formData.lcalle.toUpperCase(),
+				   'numero':formData.lnumero.toUpperCase(),
+				   'codigo_postal':formData.lpostal.toUpperCase(),
+				   'lat':formData.llat,
+				   'lng':formData.llng,
+				   'codigo':cambio
+					}
+				}).then((res) => {
+			console.log(res);
+			alert('Registro actualizado correctamente')
+});
         handleCloseConfirmationDialog()
     }
 
     const handleConfirmIndeterminating = () => {
         console.log('****************************************************************');
         console.log('indeterminate confirm')
+		axios.put(`http://localhost:9090/api/indetermina/` + id, {
+			query: {
+						}
+					}).then((res) => {
+					console.log(res);
+					alert("SE ha intedetminado correctamente")
+			console.log("registro actualizado correctamente")
+});
         handleCloseConfirmationDialog()
     }
 
@@ -151,9 +235,11 @@ const ExcepcionadasPage = (props) => {
             console.log(rr)
             delete rr[rr.length - 1]
             delete rr[rr.length - 2]
+			delete rr[rr.length - 3]
+            delete rr[rr.length - 4]
             setAddressesData(rr)
-            console.log("---------------------------------", rr.length)
-            console.log(rr[0])
+            //console.log("---------------------------------", rr.length)
+            //console.log(rr[0])
         })
     }
     function regeocoder(texto) {
@@ -178,12 +264,12 @@ const ExcepcionadasPage = (props) => {
             },
             size: 5
         };
-        axios.get(`${backendAPI}/api/consulta/` + id, {
+        axios.get(`http://localhost:4444/api/consulta/` + id, {
 
         }).then((res) => {
-            console.log(res.data)
+            //console.log(res.data)
             //setSelectedDirection(res.data[0])
-            console.log(res.data[0]['ID_DOMICILIO_RNUM'])
+            //console.log(res.data[0]['ID_DOMICILIO_RNUM'])
             // { var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO'] }
             // window.texto = texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
             //regeocoder(texto)
@@ -192,10 +278,17 @@ const ExcepcionadasPage = (props) => {
 
         })
         //-----------------------------------
-
+		console.log("------------------------------------------------------------------------")
+		axios.get("/xml/configuracion.xml", {
+   "Content-Type": "application/xml; charset=utf-8"
+})
+.then((response) => {
+   console.log('Your xml file as string', response.data);
+});
+console.log("-------------------------------------------------------------------------------")
         //------------------------------------
     }, []);
-    console.log(props)
+    //console.log(MapComponent)
 
     return (
         <>
@@ -242,13 +335,13 @@ const ExcepcionadasPage = (props) => {
                             {addressesData.map((row, index) =>
 
                                 <ListItem dense disablePadding onClick={() => handleSearchItemClick(row)} style={testSelection(row) ? { backgroundColor: 'gray' } : {}}>
-                                    {console.log('row._id', row._id)}
-                                    {console.log('selectedDirection?._id', selectedDirection?._id)}
-                                    {console.log('row._id', row)}
-                                    {console.log('selectedDirection?._id', selectedDirection)}
+                                    {/*//console.log('row._id', row._id)}
+                                    {//console.log('selectedDirection?._id', selectedDirection?._id)}
+                                    {//console.log('row._id', row)}
+                                    {//console.log('selectedDirection?._id', selectedDirection)*/}
                                     <ListItemButton>
                                         <ListItemText
-                                            primary={<Typography variant="body2" style={index === 0 ? { color: '#e20000' } : {}}>{row.formatted_address}</Typography>} />
+                                            primary={<Typography variant="body2" style={(index === 0 || index===1|| index===2) ? { color: '#e20000' } : {}}>{row.formatted_address}</Typography>} />
                                     </ListItemButton>
                                 </ListItem>)}
                         </List>

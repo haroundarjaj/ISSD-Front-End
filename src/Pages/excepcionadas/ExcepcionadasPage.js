@@ -110,14 +110,15 @@ const ExcepcionadasPage = (props) => {
         console.log('formData')
         console.log(formData);
 		console.log('le diste en guardar')
-		axios.get(`http://localhost:4444/api/consulta/` + id, {
+		axios.get(`http://localhost:9090/api/consulta/` + id, {
 
         }).then((res) => {
             //console.log(res.data)
             //setSelectedDirection(res.data[0])
             //console.log(res.data[0]['ID_DOMICILIO_RNUM'])
-            // { var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO'] }
-            // window.texto = texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
+            { var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO'] }
+            window.texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
+			setInfoValue(texto)
             //regeocoder(texto)
             window.$resp = res;
 		console.log(window.$resp)
@@ -270,8 +271,8 @@ const ExcepcionadasPage = (props) => {
             //console.log(res.data)
             //setSelectedDirection(res.data[0])
             //console.log(res.data[0]['ID_DOMICILIO_RNUM'])
-            // { var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO'] }
-            // window.texto = texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
+            { var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO'] }
+            window.texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
             //regeocoder(texto)
             geocoder(res.data)
 
@@ -313,7 +314,7 @@ console.log("-------------------------------------------------------------------
                         type="text"
                         name="info"
                         id="info-input"
-                        value={infoValue}
+                        value={window.texto}
                     />
                     <PaperStyled>
                         <List>

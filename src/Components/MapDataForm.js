@@ -59,9 +59,10 @@ const MapDataForm = (props) => {
     }
 
     useEffect(() => {
-        const dirnorm = tipoCalle + " " + lcalle + " " + lnumero + " " + lcolonia + " " + lpostal + " " + elmuni + " " + lestado;
-        console.log('dirnorm', dirnorm)
-        handleInfoChanged(dirnorm);
+        window.$dirnorm = tipoCalle + " " + lcalle + " " + lnumero + " " + lcolonia + " " + lpostal + " " + elmuni + " " + lestado;
+        console.log('dirnorm', window.$dirnorm)
+        handleInfoChanged(window.$dirnorm);
+		console.log(tipoCalle)
     }, [tipoCalle, lcalle, lnumero, lcolonia, lpostal, elmuni, lestado])
 
     useEffect(() => {
@@ -73,12 +74,13 @@ const MapDataForm = (props) => {
         var lestado1 = "";
         var llat1 = "";
         var llng1 = "";
+		var nivel_tipo_calle =""
 
         console.log(data)
 
         if (data && data.address_components) {
 
-            console.log(data)
+            console.log(data._source)
 
             var address_components = data.address_components;
             //console.log(results[2].address_components);
@@ -127,6 +129,59 @@ const MapDataForm = (props) => {
             var formato = data.formatted_address.split(",");
             //console.log(formato[formato.length-4])
             //console.log(formato)
+			 nivel_tipo_calle = null;
+                var ncalle = null;
+                if (lcalle.includes("Avenida")) {
+                    nivel_tipo_calle = "Avenida";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(8)
+                } else if (lcalle.includes("Calle")) {
+                    nivel_tipo_calle = "Calle";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(6)
+                } else if (lcalle.includes("Callejón")) {
+                    nivel_tipo_calle = "Callejón";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(8)
+                } else if (lcalle.includes("Prolongacion")) {
+                    nivel_tipo_calle = "Prolongacion";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(13)
+                } else if (lcalle.includes("Prolongación")) {
+                    nivel_tipo_calle = "Prolongación";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(13)
+                } else if (lcalle.includes("Callejon")) {
+                    nivel_tipo_calle = "Callejon";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(8)
+                } else if (lcalle.includes("Andador")) {
+                    nivel_tipo_calle = "Andador";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(8)
+                } else if (lcalle.includes("Carretera")) {
+                    nivel_tipo_calle = "Carretera";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(10)
+                } else if (lcalle.includes("Viaducto")) {
+                    nivel_tipo_calle = "Viaducto";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(9)
+                } else if (lcalle.includes("Autopista")) {
+                    nivel_tipo_calle = "Autopista";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(10)
+                } else if (lcalle.includes("Calzada")) {
+                    nivel_tipo_calle = "Calzada";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(8)
+                } else if (lcalle.includes("Cerrada")) {
+                    nivel_tipo_calle = "Cerrada";
+                } else if (lcalle.includes("Boulevard")) {
+                    nivel_tipo_calle = "Boulevard";
+                } else {
+                    nivel_tipo_calle = "";
+                }
 
             if (elmuni1 == null) {
                 elmuni1 = formato[formato.length - 4]
@@ -136,16 +191,19 @@ const MapDataForm = (props) => {
             llng1 = data['geometry'].location.lng;
         }
         else if (data != null) {
-            console.log(data)
+            console.log(data._source)
             lestado1 = data._source.nivel_1
             elmuni1 = data._source.nivel_2
             lcolonia1 = data._source.nivel_3
+			nivel_tipo_calle = data._source.nivel_4
             lcalle1 = data._source.nivel_5
             lnumero1 = data._source.nivel_6
             lpostal1 = data._source.nivel_7
             llat1 = data._source.latitud;
             llng1 = data._source.longitud;
+			//setTipoCalle(ltipocalle)
         }
+		console.log(nivel_tipo_calle)
         setLestado(lestado1)
         setElmuni(elmuni1)
         setLcolonia(lcolonia1)
@@ -154,6 +212,7 @@ const MapDataForm = (props) => {
         setLpostal(lpostal1)
         setLlat(llat1)
         setLlng(llng1)
+		setTipoCalle(nivel_tipo_calle)
 
         console.log(elmuni1)
         console.log(lestado1)
@@ -167,7 +226,7 @@ const MapDataForm = (props) => {
 
 
 
-
+	console.log(tipoCalle)
 
     //------------------------------------------------------
     return (

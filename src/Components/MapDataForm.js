@@ -75,7 +75,7 @@ const MapDataForm = (props) => {
     }, [markerCoord])
 
     useEffect(() => {
-        window.$dirnorm = tipoCalle + " " + lcalle + " " + lnumero + " " + lcolonia + " " + lpostal + " " + elmuni + " " + lestado;
+        window.$dirnorm = (tipoCalle || '') + " " + (lcalle || '') + " " + (lnumero || '') + " " + (lcolonia || '') + " " + (lpostal || '') + " " + (elmuni || '') + " " + (lestado || '');
         console.log('dirnorm', window.$dirnorm)
         handleInfoChanged(window.$dirnorm);
         console.log(tipoCalle)
@@ -213,7 +213,7 @@ const MapDataForm = (props) => {
                 //console.log(res.data)
                 //setSelectedDirection(res.data[0])
                 //console.log(res.data[0]['ID_DOMICILIO_RNUM'])
-                var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
+                var texto = (res.data[0]['SUBTITULO'] || '') + " " + (res.data[0]['CALLE'] || '') + " " + (res.data[0]['NUMERO'] || '') + " " + (res.data[0]['CIUDAD'] || '') + " " + (res.data[0]['ESTADO'] || '')
                 handleInfoChanged(texto);
                 window.tcalle = res.data[0]['SUBTITULO'];
                 window.calle = res.data[0]['CALLE']

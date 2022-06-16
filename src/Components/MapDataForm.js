@@ -24,8 +24,9 @@ const MapDataForm = (props) => {
         markerCoord
     } = props;
 
+    const [addressId, setAddressId] = useState('')
     const [estadoNormalizacion, setEstadoNormalizacion] = useState('')
-    const [tipo, setTipo] = useState(null)
+    const [tipo, setTipo] = useState('')
     const [lestado, setLestado] = useState('')
     const [elmuni, setElmuni] = useState('')
     const [lcolonia, setLcolonia] = useState('')
@@ -33,8 +34,8 @@ const MapDataForm = (props) => {
     const [lcalle, setLcalle] = useState('')
     const [lnumero, setLnumero] = useState('')
     const [lpostal, setLpostal] = useState('')
-    const [fechaInsercion, setFechaInsercion] = useState(null)
-    const [fechaCambio, setFechaCambio] = useState(null)
+    const [fechaInsercion, setFechaInsercion] = useState('')
+    const [fechaCambio, setFechaCambio] = useState('')
     const [llat, setLlat] = useState('')
     const [llng, setLlng] = useState('')
 
@@ -66,6 +67,14 @@ const MapDataForm = (props) => {
     const onIndeterminateClick = () => {
         openIndeterminateConfirmation();
     }
+
+    useEffect(() => {
+        if (id) {
+            setAddressId(id);
+        }
+        else setAddressId('');
+
+    }, [])
 
     useEffect(() => {
         if (markerCoord) {
@@ -274,7 +283,7 @@ const MapDataForm = (props) => {
                             type="text"
                             id="id"
                             Placeholder="ID"
-                            value={id}
+                            value={addressId}
                         />
                     </div>
                 </div>
@@ -297,15 +306,11 @@ const MapDataForm = (props) => {
                     </div>
                     <div className="col" colSpan="4">
                         <Input
-                            type="select"
+                            type="text"
                             id="tipo"
+                            Placeholder="Tipo"
                             value={tipo}
-                            style={{ backgroundColor: "#1F2251" }}
-                        >
-                            <option style={{ backgroundColor: "#1F2251" }}>EXCEPCIONADA</option>
-                            <option style={{ backgroundColor: "#1F2251" }}>NORMALIZADA GOOGLE</option>
-                            <option style={{ backgroundColor: "#1F2251" }}>NORMALIZADA CARTO</option>
-                        </Input>
+                        />
                     </div>
                 </div>}
                 <div className="row" style={{ marginBottom: 8 }}>

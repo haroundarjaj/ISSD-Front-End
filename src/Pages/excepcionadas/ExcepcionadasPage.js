@@ -117,7 +117,7 @@ const ExcepcionadasPage = (props) => {
             //console.log(res.data)
             //setSelectedDirection(res.data[0])
             //console.log(res.data[0]['ID_DOMICILIO_RNUM'])
-            var texto = (res.data[0]['SUBTITULO'] || '') + " " + (res.data[0]['CALLE'] || '') + " " + (res.data[0]['NUMERO'] || '') + " " + (res.data[0]['CIUDAD'] || '') + " " + (res.data[0]['ESTADO'] || '')
+            var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
             setInfoValue(texto)
             //regeocoder(texto)
             window.$resp = res;
@@ -267,7 +267,7 @@ const ExcepcionadasPage = (props) => {
             //console.log(res.data)
             //setSelectedDirection(res.data[0])
             //console.log(res.data[0]['ID_DOMICILIO_RNUM'])
-            var texto = (res.data[0]['SUBTITULO'] || '') + " " + (res.data[0]['CALLE'] || '') + " " + (res.data[0]['NUMERO'] || '') + " " + (res.data[0]['CIUDAD'] || '') + " " + (res.data[0]['ESTADO'] || '')
+            var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
             setInfoValue(texto)
             //regeocoder(texto)
             geocoder(res.data)

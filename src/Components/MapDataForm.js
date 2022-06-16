@@ -75,7 +75,7 @@ const MapDataForm = (props) => {
     }, [markerCoord])
 
     useEffect(() => {
-        window.$dirnorm = (tipoCalle || '') + " " + (lcalle || '') + " " + (lnumero || '') + " " + (lcolonia || '') + " " + (lpostal || '') + " " + (elmuni || '') + " " + (lestado || '');
+        window.$dirnorm = tipoCalle + " " + lcalle + " " + lnumero + " " + lcolonia + " " + lpostal + " " + elmuni + " " + lestado;
         console.log('dirnorm', window.$dirnorm)
         handleInfoChanged(window.$dirnorm);
         console.log(tipoCalle)
@@ -213,7 +213,7 @@ const MapDataForm = (props) => {
                 //console.log(res.data)
                 //setSelectedDirection(res.data[0])
                 //console.log(res.data[0]['ID_DOMICILIO_RNUM'])
-                var texto = (res.data[0]['SUBTITULO'] || '') + " " + (res.data[0]['CALLE'] || '') + " " + (res.data[0]['NUMERO'] || '') + " " + (res.data[0]['CIUDAD'] || '') + " " + (res.data[0]['ESTADO'] || '')
+                var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
                 handleInfoChanged(texto);
                 window.tcalle = res.data[0]['SUBTITULO'];
                 window.calle = res.data[0]['CALLE']
@@ -278,31 +278,25 @@ const MapDataForm = (props) => {
                         />
                     </div>
                 </div>
-                <div className="row" style={{ marginBottom: 8 }}>
+                {isConsult && <div className="row" style={{ marginBottom: 8 }}>
                     <div className="col-md-3">
                         <Label>Estado de Normalización</Label>
                     </div>
                     <div className="col" colSpan="4">
                         <Input
-                            onChange={(e) => {
-                                setEstadoNormalizacion(e.target.value);
-                            }}
                             type="text"
                             id="estado_normalizacion"
                             Placeholder="Tipo"
                             value={estadoNormalizacion}
                         />
                     </div>
-                </div>
-                <div className="row" style={{ marginBottom: 8 }}>
+                </div>}
+                {isConsult && <div className="row" style={{ marginBottom: 8 }}>
                     <div className="col-md-3">
                         <Label>Tipo de Normalización</Label>
                     </div>
                     <div className="col" colSpan="4">
                         <Input
-                            onChange={(e) => {
-                                setTipo(e.target.value);
-                            }}
                             type="select"
                             id="tipo"
                             value={tipo}
@@ -313,7 +307,7 @@ const MapDataForm = (props) => {
                             <option style={{ backgroundColor: "#1F2251" }}>NORMALIZADA CARTO</option>
                         </Input>
                     </div>
-                </div>
+                </div>}
                 <div className="row" style={{ marginBottom: 8 }}>
                     <div className="col-md-3">
                         <Label>Direccion Normalizada</Label>
@@ -331,9 +325,6 @@ const MapDataForm = (props) => {
                     </div>
                     <div className="col" colSpan="4">
                         <Input
-                            onChange={(e) => {
-                                setLestado(e.target.value);
-                            }}
                             type="text"
                             id="nivel_estado"
                             Placeholder="Estado"
@@ -347,9 +338,6 @@ const MapDataForm = (props) => {
                     </div>
                     <div className="col" colSpan="4">
                         <Input
-                            onChange={(e) => {
-                                setElmuni(e.target.value)
-                            }}
                             type="text"
                             id="nivel_municipio"
                             Placeholder="Municipio"
@@ -363,9 +351,6 @@ const MapDataForm = (props) => {
                     </div>
                     <div className="col" colSpan="4">
                         <Input
-                            onChange={(e) => {
-                                setLcolonia(e.target.value);
-                            }}
                             type="text"
                             id="nivel_colonia"
                             Placeholder="Colonia"
@@ -379,9 +364,6 @@ const MapDataForm = (props) => {
                     </div>
                     <div className="col" colSpan="4">
                         <Input
-                            onChange={(e) => {
-                                setTipoCalle(e.target.value)
-                            }}
                             type="text"
                             id="nivel_tipo_calle"
                             Placeholder="Tipo Calle"
@@ -395,9 +377,6 @@ const MapDataForm = (props) => {
                     </div>
                     <div className="col" colSpan="4">
                         <Input
-                            onChange={(e) => {
-                                setLcalle(e.target.value)
-                            }}
                             type="text"
                             id="nivel_calle"
                             Placeholder="Nombre Calle"
@@ -411,9 +390,6 @@ const MapDataForm = (props) => {
                     </div>
                     <div className="col" colSpan="4">
                         <Input
-                            onChange={(e) => {
-                                setLnumero(e.target.value);
-                            }}
                             type="text"
                             id="nivel_numero"
                             Placeholder="Nivel Numero"
@@ -427,9 +403,6 @@ const MapDataForm = (props) => {
                     </div>
                     <div className="col" colSpan="4">
                         <Input
-                            onChange={(e) => {
-                                setLpostal(e.target.value)
-                            }}
                             type="text"
                             id="nivel_codigo_postal"
                             Placeholder="Codigo Postal"
@@ -443,10 +416,7 @@ const MapDataForm = (props) => {
                     </div>
                     <div className="col" colSpan="4">
                         <Input
-                            onChange={(e) => {
-                                setFechaInsercion(e.target.value)
-                            }}
-                            type="date"
+                            type="text"
                             id="fecha_insercion"
                             Placeholder="Fecha Inserción"
                             value={fechaInsercion}
@@ -459,10 +429,7 @@ const MapDataForm = (props) => {
                     </div>
                     <div className="col" colSpan="4">
                         <Input
-                            onChange={(e) => {
-                                setFechaCambio(e.target.value)
-                            }}
-                            type="date"
+                            type="text"
                             id="fecha_ultimo_cambio"
                             Placeholder="Fecha Último Cambio"
                             value={fechaCambio}
@@ -475,9 +442,6 @@ const MapDataForm = (props) => {
                     </div>
                     <div className="col" colSpan="4">
                         <Input
-                            onChange={(e) => {
-                                setLlng(e.target.value);
-                            }}
                             type="number"
                             id="latitud"
                             Placeholder="Lat"
@@ -491,9 +455,6 @@ const MapDataForm = (props) => {
                     </div>
                     <div className="col" colSpan="4">
                         <Input
-                            onChange={(e) => {
-                                setLlng(e.target.value);
-                            }}
                             type="number"
                             id="longitud"
                             Placeholder="Long"

@@ -76,7 +76,7 @@ const ExcepcionadasPage = (props) => {
 
     const zoom = 15;
 
-    const handleDragEndMarker = (coord) => {
+    const handleChangeMarkerCoord = (coord) => {
         console.log(coord)
         setMarkerCoord(coord)
     }
@@ -347,7 +347,7 @@ const ExcepcionadasPage = (props) => {
                     <Row>
                         <Col>
                             {selectedDirection ?
-                                <MapComponent location={markerCoord ? markerCoord : getLocationCoord()} zoom={zoom} handleDragEndMarker={handleDragEndMarker} />
+                                <MapComponent location={markerCoord ? markerCoord : getLocationCoord()} zoom={zoom} handleChangeMarkerCoord={handleChangeMarkerCoord} />
                                 : <div style={{ width: '100%', height: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                                     Loading Map...
                                     <img

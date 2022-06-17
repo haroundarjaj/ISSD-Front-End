@@ -100,10 +100,33 @@ const MapDataForm = (props) => {
         var llat1 = "";
         var llng1 = "";
         var nivel_tipo_calle = ""
-
-        console.log(data)
-
-        if (data && data.address_components) {
+		console.log("---------------------------------------------------------")
+        
+		if(data && data._source && data._source.id_sw )
+		{console.log(data)
+	
+		console.log(data._source)
+		console.log(data._source.id_sw)
+			console.log(data._source.nivel_1)
+			setLestado(data._source.nivel_1)
+        setElmuni(data._source.nivel_2)
+        setLcolonia(data._source.nivel_3)
+        setLcalle(data._source.nivel_5)
+        setLnumero(data._source.nivel_6)
+		if(data._source.nivel_7)
+        setLpostal(data._source.nivel_7)
+		else
+		setLpostal("")
+        setLlat(data._source.latitud)
+        setLlng(data._source.longitud)
+        setTipoCalle(data._source.nivel_4)
+		setAddressId(data._source.id_sw)
+		setTipo(data._source.tipo)
+		setFechaInsercion(data._source.fecha_alta)
+		setFechaCambio(data._source.fecha_actualizacion)
+		console.log("si termina")
+		
+		}else if (data && data.address_components) {
 
             console.log(data._source)
 
@@ -214,6 +237,17 @@ const MapDataForm = (props) => {
             console.log(data['geometry'].location)
             llat1 = data['geometry'].location.lat;
             llng1 = data['geometry'].location.lng;
+			setLestado(lestado1)
+        setElmuni(elmuni1)
+        setLcolonia(lcolonia1)
+        setLcalle(lcalle1)
+        setLnumero(lnumero1)
+        setLpostal(lpostal1)
+        setLlat(llat1)
+        setLlng(llng1)
+        setTipoCalle(nivel_tipo_calle)		  
+		
+		setEstadoNormalizacion('L')				  				  
         }
         else if (data != null) {
             axios.get(`${backendAPI}/api/consulta/` + id, {
@@ -231,8 +265,21 @@ const MapDataForm = (props) => {
                 window.estado = res.data[0]['ESTADO']
                 window.colonia = res.data[0]['COLONIA']
                 window.postal = res.data[0]['CODIGO_POSTAL']
+				var tpostal = res.data[0]['CODIGO_POSTAL']+""
+				window.$postal =tpostal.substring(0,5)
 
+				setLestado(res.data[0]['ESTADO'])
+        setElmuni(res.data[0]['CIUDAD'])
+        setLcolonia(res.data[0]['COLONIA'])
+        setLcalle(res.data[0]['CALLE'])
+        setLnumero(res.data[0]['NUMERO'])
+        setLpostal(tpostal)
+        setLlat(data.latitud)
+        setLlng(data.longitud)
+        setTipoCalle(res.data[0]['SUBTITULO'])
+		setEstadoNormalizacion('M')
             })
+			
             console.log(data._source)
             lestado1 = window.estado
             elmuni1 = window.window.ciudad
@@ -245,7 +292,7 @@ const MapDataForm = (props) => {
             llng1 = data._source.longitud;
             //setTipoCalle(ltipocalle)
         }
-        console.log(nivel_tipo_calle)
+        /*console.log(nivel_tipo_calle)
         setLestado(lestado1)
         setElmuni(elmuni1)
         setLcolonia(lcolonia1)
@@ -258,7 +305,7 @@ const MapDataForm = (props) => {
 
         console.log(elmuni1)
         console.log(lestado1)
-        console.log(llat1)
+        console.log(llat1)*/
     }, [data])
     //-----------------------------------------------------
 
@@ -287,19 +334,7 @@ const MapDataForm = (props) => {
                         />
                     </div>
                 </div>
-                {isConsult && <div className="row" style={{ marginBottom: 8 }}>
-                    <div className="col-md-3">
-                        <Label>Estado de Normalización</Label>
-                    </div>
-                    <div className="col" colSpan="4">
-                        <Input
-                            type="text"
-                            id="estado_normalizacion"
-                            Placeholder="Tipo"
-                            value={estadoNormalizacion}
-                        />
-                    </div>
-                </div>}
+
                 {isConsult && <div className="row" style={{ marginBottom: 8 }}>
                     <div className="col-md-3">
                         <Label>Tipo de Normalización</Label>

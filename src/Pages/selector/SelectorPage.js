@@ -77,16 +77,18 @@ const SelectorPage = props => {
             },
             size: 30
         };
-
-        AddressServices.getByQuery(query).then((res) => {
-            setCurrentPage(1);
-            setLoading(false);
-            console.log(res.data)
-            setDirecciones(res.data)
-        }).catch(err => {
-            setLoading(false);
-            handleShowSnackBar('error', 'Error al conectarse al servidor')
-        });
+        // Timeout used only for demo purpose
+        setTimeout(function () {
+            AddressServices.getByQuery(query).then((res) => {
+                setCurrentPage(1);
+                setLoading(false);
+                console.log(res.data)
+                setDirecciones(res.data)
+            }).catch(err => {
+                setLoading(false);
+                handleShowSnackBar('error', 'Error al conectarse al servidor')
+            });
+        }, 2000);
     }, [])
 
     return (

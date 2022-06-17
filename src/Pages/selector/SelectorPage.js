@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Paper, Table, TableBody, TableCell, TableContainer, TableRow } from '@mui/material';
+import { Alert, Paper, Snackbar, Table, TableBody, TableCell, TableContainer, TableRow } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import { Breadcrumb, BreadcrumbItem, Container, Button } from 'reactstrap'
 import PaginationComponent from '../../Components/PaginationComponent';
@@ -18,6 +18,9 @@ const SelectorPage = props => {
     const [direcciones, setDirecciones] = useState([])
     const [currentPage, setCurrentPage] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [openSnackbar, setOpenSnackBar] = useState(false);
+    const [snackbarType, setSnackbarType] = useState('success');
+    const [snackbarMessage, setSnackbarMessage] = useState('');
 
     const history = useHistory();
 
@@ -40,6 +43,17 @@ const SelectorPage = props => {
 
         });
     }
+
+    const handleCloseSnackBar = () => {
+        setOpenSnackBar(false);
+    }
+
+    const handleShowSnackBar = (type, message) => {
+        setSnackbarType(type);
+        setSnackbarMessage(message);
+        setOpenSnackBar(true);
+    }
+
 
     useEffect(() => {
         const query = {
@@ -69,7 +83,7 @@ const SelectorPage = props => {
             setLoading(false);
             console.log(res.data)
             setDirecciones(res.data)
-        })
+        }).catch(err => { handleShowSnackBar('error', 'Error al conectarse al servidor') });
     }, [])
 
     return (
@@ -133,6 +147,11 @@ const SelectorPage = props => {
                     }
                 </Container>
             </div>
+            <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackBar}>
+                <Alert onClose={handleCloseSnackBar} severity={snackbarType} sx={{ width: '100%' }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </>
     );
 }

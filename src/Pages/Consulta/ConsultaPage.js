@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Container, Breadcrumb, BreadcrumbItem, Input, Row, Col } from 'reactstrap';
 import MapComponent from '../../Components/MapComponent';
 import { withStyles } from '@mui/styles';
-import { List, ListItem, ListItemButton, ListItemText, Paper, Typography } from '@mui/material';
+import { Alert, List, ListItem, ListItemButton, ListItemText, Paper, Snackbar, Typography } from '@mui/material';
 import { alpha } from "@mui/material";
 import MapDataForm from '../../Components/MapDataForm';
 import AddressServices from '../../Services/AddressServices';
@@ -24,6 +24,9 @@ const ConsultaPage = () => {
     const [searchValue, setSearchValue] = useState('');
     const [infoValue, setInfoValue] = useState('');
     const [searchData, setSearchData] = useState([]);
+    const [openSnackbar, setOpenSnackBar] = useState(false);
+    const [snackbarType, setSnackbarType] = useState('success');
+    const [snackbarMessage, setSnackbarMessage] = useState('');
 
     const handleDragEndMarker = (address) => {
         console.log(address)
@@ -65,9 +68,19 @@ const ConsultaPage = () => {
             AddressServices.searchByQuery(query).then((res) => {
                 console.log(res.data.hits.hits);
                 setSearchData(res.data.hits.hits);
-            }).catch(err => { console.log(err) })
+            }).catch(err => { handleShowSnackBar('error', 'Error al conectarse al servidor') })
         } else setSearchData([])
         setSearchValue(value);
+    }
+
+    const handleCloseSnackBar = () => {
+        setOpenSnackBar(false);
+    }
+
+    const handleShowSnackBar = (type, message) => {
+        setSnackbarType(type);
+        setSnackbarMessage(message);
+        setOpenSnackBar(true);
     }
 
     return (
@@ -124,6 +137,11 @@ const ConsultaPage = () => {
                         </Col>
                     </Row>
                 </Container>
+                <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackBar}>
+                    <Alert onClose={handleCloseSnackBar} severity={snackbarType} sx={{ width: '100%' }}>
+                        {snackbarMessage}
+                    </Alert>
+                </Snackbar>
             </div>
         </>
     );

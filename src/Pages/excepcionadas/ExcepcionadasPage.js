@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { Container, Breadcrumb, BreadcrumbItem, Input, Row, Col } from 'reactstrap';
 import MapComponent from '../../Components/MapComponent';
 import { withStyles } from '@mui/styles';
-import { Dialog, List, ListItem, ListItemButton, ListItemText, Paper, Typography, Zoom } from '@mui/material';
+import { Alert, Dialog, List, ListItem, ListItemButton, ListItemText, Paper, Snackbar, Typography, Zoom } from '@mui/material';
 import { alpha } from "@mui/material";
 import MapDataForm from '../../Components/MapDataForm';
 import ConfirmationDialog from '../../Components/ConfirmationDialog';
@@ -31,6 +31,9 @@ const ExcepcionadasPage = (props) => {
     const [infoValue, setInfoValue] = useState('');
     const [formData, setFormData] = useState(null);
     const [markerCoord, setMarkerCoord] = useState(null);
+    const [openSnackbar, setOpenSnackBar] = useState(false);
+    const [snackbarType, setSnackbarType] = useState('success');
+    const [snackbarMessage, setSnackbarMessage] = useState('');
 
     const zoom = 15;
 
@@ -115,19 +118,17 @@ const ExcepcionadasPage = (props) => {
             }
             AddressServices.actualizeAddress(id, params).then((res) => {
                 console.log(res);
-                alert('Registro actualizado correctamente')
-            });
-            handleCloseConfirmationDialog()
-        })
+                handleShowSnackBar('success', 'Registro actualizado correctamente')
+                handleCloseConfirmationDialog()
+            }).catch(err => { handleShowSnackBar('error', 'Error al conectarse al servidor') });
+        }).catch(err => { handleShowSnackBar('error', 'Error al conectarse al servidor') })
     }
 
     const handleConfirmIndeterminating = () => {
         const query = {};
         AddressServices.confirmIndeterminate(id, query).then((res) => {
-            console.log(res);
-            alert("SE ha intedetminado correctamente")
-            console.log("registro actualizado correctamente")
-        });
+            handleShowSnackBar('success', 'Registro actualizado correctamente')
+        }).catch(err => { handleShowSnackBar('error', 'Error al conectarse al servidor') });
         handleCloseConfirmationDialog()
     }
 
@@ -179,9 +180,17 @@ const ExcepcionadasPage = (props) => {
             delete rr[rr.length - 3]
             delete rr[rr.length - 4]
             setAddressesData(rr)
-            //console.log("---------------------------------", rr.length)
-            //console.log(rr[0])
-        })
+        }).catch(err => { handleShowSnackBar('error', 'Error al conectarse al servidor de Google') });
+    }
+
+    const handleCloseSnackBar = () => {
+        setOpenSnackBar(false);
+    }
+
+    const handleShowSnackBar = (type, message) => {
+        setSnackbarType(type);
+        setSnackbarMessage(message);
+        setOpenSnackBar(true);
     }
 
     useEffect(() => {
@@ -197,7 +206,7 @@ const ExcepcionadasPage = (props) => {
             var dirnom = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
             setInfoValue(dirnom)
             geocoder(res.data)
-        })
+        }).catch(err => { handleShowSnackBar('error', 'Error al conectarse al servidor') });
     }, []);
 
     return (
@@ -302,6 +311,11 @@ const ExcepcionadasPage = (props) => {
                     TransitionComponent={Zoom}
                 />
             </div>
+            <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackBar}>
+                <Alert onClose={handleCloseSnackBar} severity={snackbarType} sx={{ width: '100%' }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </>
     );
 }

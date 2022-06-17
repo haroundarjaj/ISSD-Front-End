@@ -4,27 +4,7 @@ import { Paper, Table, TableBody, TableCell, TableContainer, TableRow } from '@m
 import { withStyles } from '@mui/styles';
 import { Breadcrumb, BreadcrumbItem, Container, Button } from 'reactstrap'
 import PaginationComponent from '../../Components/PaginationComponent';
-import axios from 'axios';
-import { backendAPI } from '../../Config/apiUrl'
-
-
-/* const rows = [
-    'address 1', 'address 2', 'address 3', 'address 4', 'address 5', 'address 6', 'address 7', 'address 8', 'address 9',
-    'address 10', 'address 11', 'address 12', 'address 13', 'address 14', 'address 15', 'address 16',
-    'address 17', 'address 18', 'address 19', 'address 20', 'address 21', 'address 22', 'address 23',
-    'address 24', 'address 25', 'address 26', 'address 27', 'address 28', 'address 29', 'address 30',
-    'address 31', 'address 32', 'address 33', 'address 34', 'address 35', 'address 36', 'address 37',
-    'address 1', 'address 2', 'address 3', 'address 4', 'address 5', 'address 6', 'address 7', 'address 8', 'address 9',
-    'address 10', 'address 11', 'address 12', 'address 13', 'address 14', 'address 15', 'address 16',
-    'address 17', 'address 18', 'address 19', 'address 20', 'address 21', 'address 22', 'address 23',
-    'address 24', 'address 25', 'address 26', 'address 27', 'address 28', 'address 29', 'address 30',
-    'address 31', 'address 32', 'address 33', 'address 34', 'address 35', 'address 36', 'address 37',
-    'address 1', 'address 2', 'address 3', 'address 4', 'address 5', 'address 6', 'address 7', 'address 8', 'address 9',
-    'address 10', 'address 11', 'address 12', 'address 13', 'address 14', 'address 15', 'address 16',
-    'address 17', 'address 18', 'address 19', 'address 20', 'address 21', 'address 22', 'address 23',
-    'address 24', 'address 25', 'address 26', 'address 27', 'address 28', 'address 29', 'address 30',
-    'address 31', 'address 32', 'address 33', 'address 34', 'address 35', 'address 36', 'address 37'
-]; */
+import AddressServices from '../../Services/AddressServices';
 
 let PageSize = 10;
 
@@ -84,33 +64,14 @@ const SelectorPage = props => {
             size: 30
         };
 
-        axios.get(`${backendAPI}/api/consulta`, {
-            params: {
-                source: JSON.stringify(query),
-                source_content_type: 'application/json'
-            }
-        }).then((res) => {
-
-            console.log("-----------------------------------------------------------------------------------------------------------------")
+        AddressServices.getByQuery(query).then((res) => {
             setCurrentPage(1);
             setLoading(false);
             console.log(res.data)
             setDirecciones(res.data)
         })
-
-
-        /* AddressServices.getAll().then((res) => {
-            console.log(res)
-            console.log(res.data)
-        }) */
-
-
-        /* setTimeout(function () {
-            setLoading(false);
-        }, 3000); */
     }, [])
 
-    console.log(emptyRows())
     return (
         <>
             <div className="section section-basic" id="basic-elements">

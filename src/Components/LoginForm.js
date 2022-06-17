@@ -17,8 +17,8 @@ import {
 } from "reactstrap";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import axios from "axios";
 import { CircularProgress } from "@mui/material";
+import AuthServices from "../Services/AuthServices";
 
 const LoginForm = (props) => {
     const [emailFocus, setUsernameFocus] = useState(false);
@@ -46,7 +46,7 @@ const LoginForm = (props) => {
         }
         if (isValid) {
             setIsLoading(true)
-            axios.post('http://192.168.50.91:4444/api/auth/login', { user: username, password: password })
+            AuthServices.login({ user: username, password: password })
                 .then(response => {
                     if (response.data?.usuario?.result === 'OK') {
                         console.log(response.data.token)

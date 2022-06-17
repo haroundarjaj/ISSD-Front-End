@@ -2,39 +2,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, Breadcrumb, BreadcrumbItem, Input, Row, Col } from 'reactstrap';
-import MapComponent from '../../Components/Map/MapComponent';
-import axios from 'axios';
-import { backendAPI } from '../../Config/apiUrl';
+import MapComponent from '../../Components/MapComponent';
 import { withStyles } from '@mui/styles';
 import { Dialog, List, ListItem, ListItemButton, ListItemText, Paper, Typography, Zoom } from '@mui/material';
 import { alpha } from "@mui/material";
 import MapDataForm from '../../Components/MapDataForm';
 import ConfirmationDialog from '../../Components/ConfirmationDialog';
-
-
-function lxml() {
-    var rawFile = new XMLHttpRequest();
-    rawFile.open("GET", 'configuracion.xml', false);
-    rawFile.onreadystatechange = () => {
-        if (rawFile.readyState === 4) {
-            if (rawFile.status === 200 || rawFile.status == 0) {
-                var xmlasstring = rawFile.responseText;
-                console.log('Your xml file as string', xmlasstring)
-            }
-        }
-        console.log(rawFile.responseTex)
-    }
-}
-
-const options = {
-    method: 'GET',
-    url: 'https://google-maps-geocoding.p.rapidapi.com/geocode/json',
-    params: { latlng: '40.714224,-73.96145', language: 'en' },
-    headers: {
-        'X-RapidAPI-Key': 'AIzaSyDoLzHyM8TTL2LnInXa18HrrrdY2gG4CbE',
-        'X-RapidAPI-Host': 'google-maps-geocoding.p.rapidapi.com'
-    }
-};
+import AddressServices from '../../Services/AddressServices';
+import GoogleAPIServices from '../../Services/GoogleAPIServices';
 
 const PaperStyled = withStyles(theme => ({
     root: {
@@ -46,30 +21,13 @@ const PaperStyled = withStyles(theme => ({
     },
 }))(Paper);
 
-var $dir = ""
-
-const listItems = [
-    { title: 'Address 1', isfromServer: true },
-    { title: 'Address 2', isfromServer: false },
-    { title: 'Address 3', isfromServer: true },
-    { title: 'Address 4', isfromServer: false },
-    { title: 'Address 5', isfromServer: false },
-    { title: 'Address 6', isfromServer: false },
-]
-
 const ExcepcionadasPage = (props) => {
     const { id } = useParams();
 
     const [selectedDirection, setSelectedDirection] = useState(null);
     const [isOpenSaveConfirmation, setIsOpenSaveConfirmation] = useState(false);
     const [isOpenIndeterminateConfirmation, setIsOpenIndeterminateSaveConfirmation] = useState(false);
-    const [addressesData, setAddressesData] = useState([
-        { _id: 'testid1', _source: { direccion_normalizada: 'address 1' } },
-        { _id: 'testid2', _source: { direccion_normalizada: 'address 2' } },
-        { _id: 'testid3', _source: { direccion_normalizada: 'address 3' } },
-        { _id: 'testid4', _source: { direccion_normalizada: 'address 4' } },
-        { _id: 'testid5', _source: { direccion_normalizada: 'address 5' } }
-    ]);
+    const [addressesData, setAddressesData] = useState([]);
     const [infoValue, setInfoValue] = useState('');
     const [formData, setFormData] = useState(null);
     const [markerCoord, setMarkerCoord] = useState(null);
@@ -111,46 +69,38 @@ const ExcepcionadasPage = (props) => {
         console.log('formData')
         console.log(formData);
         console.log('le diste en guardar')
-        axios.get(`${backendAPI}/api/consulta/` + id, {
-
-        }).then((res) => {
+        AddressServices.getById(id).then((res) => {
             //console.log(res.data)
             //setSelectedDirection(res.data[0])
             //console.log(res.data[0]['ID_DOMICILIO_RNUM'])
-            var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
-            setInfoValue(texto)
-            //regeocoder(texto)
-            window.$resp = res;
-            console.log(window.$resp)
+            const address = res.data[0];
+            var dirnom = address['SUBTITULO'] + " " + address['CALLE'] + " " + address['NUMERO'] + " " + address['CIUDAD'] + " " + address['ESTADO']
+            setInfoValue(dirnom)
 
-        })
-        console.log(window.$resp.data[0])
-        var cambio = "";
-        if (window.$resp.data[0]['ESTADO'] != formData.lestado.toUpperCase()) {
-            cambio = cambio + "E"
-            console.log(window.$resp['ESTADO'] + " " + formData.lestado.toUpperCase())
-        }
-        if (window.$resp.data[0]['CIUDAD'] != formData.elmuni.toUpperCase()) {
-            cambio = cambio + "C"
-        }
-        if (window.$resp.data[0]['COLONIA'] != formData.lcolonia.toUpperCase()) {
-            cambio = cambio + "B"
-        }
-        if (window.$resp.data[0]['TERMINAL_LATITUD'] != formData.llat || window.$resp.data[0]['TERMINAL_LONGITUD'] != formData.llng) {
-            cambio = cambio + "L"
-        }
-        if (window.$resp.data[0]['CODIGO_POSTAL'] != formData.lpostal.toUpperCase()) {
-            cambio = cambio + "P"
-        }
-        if (window.$resp.data[0]['CALLE'] != formData.lcalle.toUpperCase()) {
-            cambio = cambio + "S"
-        }
+            var cambio = "";
+            if (address['ESTADO'] !== formData.lestado.toUpperCase()) {
+                cambio = cambio + "E"
+            }
+            if (address['CIUDAD'] !== formData.elmuni.toUpperCase()) {
+                cambio = cambio + "C"
+            }
+            if (address['COLONIA'] !== formData.lcolonia.toUpperCase()) {
+                cambio = cambio + "B"
+            }
+            if (address['TERMINAL_LATITUD'] !== formData.llat || address['TERMINAL_LONGITUD'] !== formData.llng) {
+                cambio = cambio + "L"
+            }
+            if (address['CODIGO_POSTAL'] !== formData.lpostal.toUpperCase()) {
+                cambio = cambio + "P"
+            }
+            if (address['CALLE'] !== formData.lcalle.toUpperCase()) {
+                cambio = cambio + "S"
+            }
 
 
-        console.log(cambio)
-        console.log(formData)
-        axios.post(`${backendAPI}/api/actualiza/` + id, null, {
-            params: {
+            console.log(cambio)
+            console.log(formData)
+            const params = {
                 'estado': formData.lestado.toUpperCase(),
                 'ciudad': formData.elmuni.toUpperCase(),
                 'municipio': formData.elmuni.toUpperCase(),
@@ -163,20 +113,17 @@ const ExcepcionadasPage = (props) => {
                 'lng': formData.llng,
                 'codigo': cambio
             }
-        }).then((res) => {
-            console.log(res);
-            alert('Registro actualizado correctamente')
-        });
-        handleCloseConfirmationDialog()
+            AddressServices.actualizeAddress(id, params).then((res) => {
+                console.log(res);
+                alert('Registro actualizado correctamente')
+            });
+            handleCloseConfirmationDialog()
+        })
     }
 
     const handleConfirmIndeterminating = () => {
-        console.log('****************************************************************');
-        console.log('indeterminate confirm')
-        axios.put(`${backendAPI}/api/indetermina/` + id, {
-            query: {
-            }
-        }).then((res) => {
+        const query = {};
+        AddressServices.confirmIndeterminate(id, query).then((res) => {
             console.log(res);
             alert("SE ha intedetminado correctamente")
             console.log("registro actualizado correctamente")
@@ -219,10 +166,8 @@ const ExcepcionadasPage = (props) => {
         return { lat: parseFloat(0.0), lng: parseFloat(0.0) };
     }
 
-    function geocoder(dir) {
-        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=` + dir[0]['TERMINAL_LONGITUD'] + `,` + dir[0]['TERMINAL_LATITUD'] + `&key=AIzaSyDoLzHyM8TTL2LnInXa18HrrrdY2gG4CbE`, {
-
-        }).then((res) => {
+    const geocoder = (dir) => {
+        GoogleAPIServices.googleGeoCoder(dir[0]['TERMINAL_LONGITUD'], dir[0]['TERMINAL_LATITUD']).then((res) => {
             console.log(res.data.results)
             setSelectedDirection(res.data.results[0])
             setMarkerCoord(null)
@@ -238,54 +183,22 @@ const ExcepcionadasPage = (props) => {
             //console.log(rr[0])
         })
     }
-    function regeocoder(texto) {
-        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=` + texto + `&key=AIzaSyDoLzHyM8TTL2LnInXa18HrrrdY2gG4CbE`, {
-
-        }).then((res) => {
-            console.log(res.data.results)
-            setSelectedDirection(res.data.results[0])
-            setMarkerCoord(null)
-            setAddressesData(res.data.results)
-        })
-
-
-    }
-
 
     useEffect(() => {
-        const query = {
+        /* const query = {
             query: {
                 match: {
                     "_id": id
                 }
             },
             size: 5
-        };
-        axios.get(`${backendAPI}/api/consulta/` + id, {
-
-        }).then((res) => {
-            //console.log(res.data)
-            //setSelectedDirection(res.data[0])
-            //console.log(res.data[0]['ID_DOMICILIO_RNUM'])
-            var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
-            setInfoValue(texto)
-            //regeocoder(texto)
+        }; */
+        AddressServices.getById(id).then((res) => {
+            var dirnom = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
+            setInfoValue(dirnom)
             geocoder(res.data)
-
-
         })
-        //-----------------------------------
-        console.log("------------------------------------------------------------------------")
-        axios.get("/xml/configuracion.xml", {
-            "Content-Type": "application/xml; charset=utf-8"
-        })
-            .then((response) => {
-                console.log('Your xml file as string', response.data);
-            });
-        console.log("-------------------------------------------------------------------------------")
-        //------------------------------------
     }, []);
-    //console.log(MapComponent)
 
     return (
         <>
@@ -314,28 +227,9 @@ const ExcepcionadasPage = (props) => {
                     />
                     <PaperStyled>
                         <List>
-                            {/* searchData.filter(obj => obj.isfromServer).map(row =>
-                            <ListItem dense disablePadding>
-                                <ListItemButton>
-                                    <ListItemText
-                                        primary={<Typography variant="body2" style={{ color: '#D850D4' }}>{row.title}</Typography>} />
-                                </ListItemButton>
-                        </ListItem>) */}
-                            {/* searchData.filter(obj => obj.isfromServer).length > 0 && searchData.filter(obj => !obj.isfromServer).length > 0 && <Divider style={{ width: '100%' }} /> */}
-                            {/* searchData.filter(obj => !obj.isfromServer).map(row =>
-                            <ListItem dense disablePadding>
-                                <ListItemButton>
-                                    <ListItemText
-                                        primary={<Typography variant="body2">{row.title}</Typography>} />
-                                </ListItemButton>
-                        </ListItem>) */}
                             {addressesData.map((row, index) =>
 
                                 <ListItem dense disablePadding onClick={() => handleSearchItemClick(row)} style={testSelection(row) ? { backgroundColor: 'gray' } : {}}>
-                                    {/*//console.log('row._id', row._id)}
-                                    {//console.log('selectedDirection?._id', selectedDirection?._id)}
-                                    {//console.log('row._id', row)}
-                                    {//console.log('selectedDirection?._id', selectedDirection)*/}
                                     <ListItemButton>
                                         <ListItemText
                                             primary={<Typography variant="body2" style={(index === 0 || index === 1 || index === 2) ? { color: '#e20000' } : {}}>{row.formatted_address}</Typography>} />
@@ -364,6 +258,7 @@ const ExcepcionadasPage = (props) => {
                                 openSaveConfirmation={handleOpenSaveConfirmationDialog}
                                 openIndeterminateConfirmation={handleOpenIndeterminateConfirmationDialog}
                                 markerCoord={markerCoord}
+                                dirnorm={infoValue}
                             />
                         </Col>
                     </Row>

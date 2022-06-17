@@ -21,7 +21,8 @@ const MapDataForm = (props) => {
         isConsult,
         openSaveConfirmation,
         openIndeterminateConfirmation,
-        markerCoord
+        markerCoord,
+        dirnorm
     } = props;
 
     const [addressId, setAddressId] = useState('')
@@ -84,10 +85,8 @@ const MapDataForm = (props) => {
     }, [markerCoord])
 
     useEffect(() => {
-        window.$dirnorm = tipoCalle + " " + lcalle + " " + lnumero + " " + lcolonia + " " + lpostal + " " + elmuni + " " + lestado;
-        console.log('dirnorm', window.$dirnorm)
-        handleInfoChanged(window.$dirnorm);
-        console.log(tipoCalle)
+        const dirnorm = tipoCalle + " " + lcalle + " " + lnumero + " " + lcolonia + " " + lpostal + " " + elmuni + " " + lestado;
+        handleInfoChanged(dirnorm);
     }, [tipoCalle, lcalle, lnumero, lcolonia, lpostal, elmuni, lestado])
 
     useEffect(() => {
@@ -99,34 +98,32 @@ const MapDataForm = (props) => {
         var lestado1 = "";
         var llat1 = "";
         var llng1 = "";
-        var nivel_tipo_calle = ""
-		console.log("---------------------------------------------------------")
-        
-		if(data && data._source && data._source.id_sw )
-		{console.log(data)
-	
-		console.log(data._source)
-		console.log(data._source.id_sw)
-			console.log(data._source.nivel_1)
-			setLestado(data._source.nivel_1)
-        setElmuni(data._source.nivel_2)
-        setLcolonia(data._source.nivel_3)
-        setLcalle(data._source.nivel_5)
-        setLnumero(data._source.nivel_6)
-		if(data._source.nivel_7)
-        setLpostal(data._source.nivel_7)
-		else
-		setLpostal("")
-        setLlat(data._source.latitud)
-        setLlng(data._source.longitud)
-        setTipoCalle(data._source.nivel_4)
-		setAddressId(data._source.id_sw)
-		setTipo(data._source.tipo)
-		setFechaInsercion(data._source.fecha_alta)
-		setFechaCambio(data._source.fecha_actualizacion)
-		console.log("si termina")
-		
-		}else if (data && data.address_components) {
+        var tipoCalle1 = "";
+        var addressId1 = "";
+        var tipo1 = "";
+        var fechaInsercion1 = "";
+        var fechaCambio1 = "";
+        var estadoNormalizacion1 = "";
+
+        if (data && data._source && data._source.id_sw) {
+            lestado1 = data._source.nivel_1;
+            elmuni1 = data._source.nivel_2;
+            lcolonia1 = data._source.nivel_3;
+            lcalle1 = data._source.nivel_5;
+            lnumero1 = data._source.nivel_6;
+            if (data._source.nivel_7)
+                lpostal1 = data._source.nivel_7;
+            else
+                lpostal1 = "";
+            llat1 = data._source.latitud;
+            llng1 = data._source.longitud;
+            tipoCalle1 = data._source.nivel_4;
+            addressId1 = data._source.id_sw;
+            tipo1 = data._source.tipo;
+            fechaInsercion1 = data._source.fecha_alta;
+            fechaCambio1 = data._source.fecha_actualizacion;
+
+        } else if (data && data.address_components) {
 
             console.log(data._source)
 
@@ -177,58 +174,57 @@ const MapDataForm = (props) => {
             var formato = data.formatted_address.split(",");
             //console.log(formato[formato.length-4])
             //console.log(formato)
-            nivel_tipo_calle = null;
             var ncalle = null;
             if (lcalle.includes("Avenida")) {
-                nivel_tipo_calle = "Avenida";
+                tipoCalle1 = "Avenida";
                 ncalle = lcalle
                 lcalle1 = ncalle.slice(8)
             } else if (lcalle.includes("Calle")) {
-                nivel_tipo_calle = "Calle";
+                tipoCalle1 = "Calle";
                 ncalle = lcalle
                 lcalle1 = ncalle.slice(6)
             } else if (lcalle.includes("Callejón")) {
-                nivel_tipo_calle = "Callejón";
+                tipoCalle1 = "Callejón";
                 ncalle = lcalle
                 lcalle1 = ncalle.slice(8)
             } else if (lcalle.includes("Prolongacion")) {
-                nivel_tipo_calle = "Prolongacion";
+                tipoCalle1 = "Prolongacion";
                 ncalle = lcalle
                 lcalle1 = ncalle.slice(13)
             } else if (lcalle.includes("Prolongación")) {
-                nivel_tipo_calle = "Prolongación";
+                tipoCalle1 = "Prolongación";
                 ncalle = lcalle
                 lcalle1 = ncalle.slice(13)
             } else if (lcalle.includes("Callejon")) {
-                nivel_tipo_calle = "Callejon";
+                tipoCalle1 = "Callejon";
                 ncalle = lcalle
                 lcalle1 = ncalle.slice(8)
             } else if (lcalle.includes("Andador")) {
-                nivel_tipo_calle = "Andador";
+                tipoCalle1 = "Andador";
                 ncalle = lcalle
                 lcalle1 = ncalle.slice(8)
             } else if (lcalle.includes("Carretera")) {
-                nivel_tipo_calle = "Carretera";
+                tipoCalle1 = "Carretera";
                 ncalle = lcalle
                 lcalle1 = ncalle.slice(10)
             } else if (lcalle.includes("Viaducto")) {
-                nivel_tipo_calle = "Viaducto";
+                tipoCalle1 = "Viaducto";
                 ncalle = lcalle
                 lcalle1 = ncalle.slice(9)
             } else if (lcalle.includes("Autopista")) {
-                nivel_tipo_calle = "Autopista";
+                tipoCalle1 = "Autopista";
                 ncalle = lcalle
                 lcalle1 = ncalle.slice(10)
             } else if (lcalle.includes("Calzada")) {
-                nivel_tipo_calle = "Calzada";
+                tipoCalle1 = "Calzada";
                 ncalle = lcalle
                 lcalle1 = ncalle.slice(8)
             } else if (lcalle.includes("Cerrada")) {
-                nivel_tipo_calle = "Cerrada";
+                tipoCalle1 = "Cerrada";
             } else if (lcalle.includes("Boulevard")) {
-                nivel_tipo_calle = "Boulevard";
+                tipoCalle1 = "Boulevard";
             } else {
-                nivel_tipo_calle = "";
+                tipoCalle1 = "";
             }
 
             if (elmuni1 == null) {
@@ -237,17 +233,8 @@ const MapDataForm = (props) => {
             console.log(data['geometry'].location)
             llat1 = data['geometry'].location.lat;
             llng1 = data['geometry'].location.lng;
-			setLestado(lestado1)
-        setElmuni(elmuni1)
-        setLcolonia(lcolonia1)
-        setLcalle(lcalle1)
-        setLnumero(lnumero1)
-        setLpostal(lpostal1)
-        setLlat(llat1)
-        setLlng(llng1)
-        setTipoCalle(nivel_tipo_calle)		  
-		
-		setEstadoNormalizacion('L')				  				  
+
+            estadoNormalizacion1 = 'L';
         }
         else if (data != null) {
             axios.get(`${backendAPI}/api/consulta/` + id, {
@@ -256,43 +243,25 @@ const MapDataForm = (props) => {
                 //console.log(res.data)
                 //setSelectedDirection(res.data[0])
                 //console.log(res.data[0]['ID_DOMICILIO_RNUM'])
-                var texto = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
-                handleInfoChanged(texto);
-                window.tcalle = res.data[0]['SUBTITULO'];
-                window.calle = res.data[0]['CALLE']
-                window.numero = res.data[0]['NUMERO']
-                window.ciudad = res.data[0]['CIUDAD']
-                window.estado = res.data[0]['ESTADO']
-                window.colonia = res.data[0]['COLONIA']
-                window.postal = res.data[0]['CODIGO_POSTAL']
-				var tpostal = res.data[0]['CODIGO_POSTAL']+""
-				window.$postal =tpostal.substring(0,5)
+                var dirnom = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
+                handleInfoChanged(dirnom);
 
-				setLestado(res.data[0]['ESTADO'])
-        setElmuni(res.data[0]['CIUDAD'])
-        setLcolonia(res.data[0]['COLONIA'])
-        setLcalle(res.data[0]['CALLE'])
-        setLnumero(res.data[0]['NUMERO'])
-        setLpostal(tpostal)
-        setLlat(data.latitud)
-        setLlng(data.longitud)
-        setTipoCalle(res.data[0]['SUBTITULO'])
-		setEstadoNormalizacion('M')
+                lestado1 = res.data[0]['ESTADO'];
+                elmuni1 = res.data[0]['CIUDAD'];
+                lcolonia1 = res.data[0]['COLONIA'];
+                lcalle1 = res.data[0]['CALLE'];
+                lnumero1 = res.data[0]['NUMERO'];
+                lpostal1 = res.data[0]['CODIGO_POSTAL'];
+                llat1 = data.latitud;
+                llng1 = data.longitud;
+                tipoCalle1 = res.data[0]['SUBTITULO'];
+                estadoNormalizacion1 = 'M';
             })
-			
-            console.log(data._source)
-            lestado1 = window.estado
-            elmuni1 = window.window.ciudad
-            lcolonia1 = window.colonia
-            nivel_tipo_calle = window.tcalle
-            lcalle1 = window.calle
-            lnumero1 = window.numero
-            lpostal1 = window.postal
             llat1 = data._source.latitud;
             llng1 = data._source.longitud;
             //setTipoCalle(ltipocalle)
         }
-        /*console.log(nivel_tipo_calle)
+
         setLestado(lestado1)
         setElmuni(elmuni1)
         setLcolonia(lcolonia1)
@@ -301,23 +270,14 @@ const MapDataForm = (props) => {
         setLpostal(lpostal1)
         setLlat(llat1)
         setLlng(llng1)
-        setTipoCalle(nivel_tipo_calle)
-
-        console.log(elmuni1)
-        console.log(lestado1)
-        console.log(llat1)*/
+        setTipoCalle(tipoCalle1)
+        setAddressId(addressId1)
+        setTipo(tipo1)
+        setFechaInsercion(fechaInsercion1)
+        setFechaCambio(fechaCambio1)
+        setEstadoNormalizacion(estadoNormalizacion1)
     }, [data])
-    //-----------------------------------------------------
 
-    //console.log("QQQQQQQQQQQQQQQQQQQQQqq "+lcalle1)
-    //console.log(components.country);
-
-
-
-
-    console.log(tipoCalle)
-
-    //------------------------------------------------------
     return (
         <Card>
             <CardBody>
@@ -354,7 +314,7 @@ const MapDataForm = (props) => {
                     </div>
                     <div className="col" colSpan="4" style={{ paddingLeft: 30, paddingRight: 10 }}>
                         <h6>
-                            {window.$dirnorm}
+                            {dirnorm}
                         </h6>
                     </div>
                 </div>
@@ -482,7 +442,7 @@ const MapDataForm = (props) => {
                     </div>
                     <div className="col" colSpan="4">
                         <Input
-                            type="number"
+                            type="text"
                             id="latitud"
                             Placeholder="Lat"
                             value={llat}
@@ -495,7 +455,7 @@ const MapDataForm = (props) => {
                     </div>
                     <div className="col" colSpan="4">
                         <Input
-                            type="number"
+                            type="text"
                             id="longitud"
                             Placeholder="Long"
                             value={llng}

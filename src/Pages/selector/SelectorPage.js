@@ -83,7 +83,10 @@ const SelectorPage = props => {
             setLoading(false);
             console.log(res.data)
             setDirecciones(res.data)
-        }).catch(err => { handleShowSnackBar('error', 'Error al conectarse al servidor') });
+        }).catch(err => {
+            setLoading(false);
+            handleShowSnackBar('error', 'Error al conectarse al servidor')
+        });
     }, [])
 
     return (
@@ -109,41 +112,48 @@ const SelectorPage = props => {
                                 width="150"
                                 src={require("../../assets/img/loadingIndicator.gif")}
                             /></div> :
-                        <TableContainer component={PaperStyled}>
-                            <Table sx={{ minWidth: 500 }} size="small" aria-label="custom pagination table">
-                                <TableBody>
-                                    {currentTableData.map((row, index) => (
-                                        <TableRow hover key={index} onDoubleClick={() => handleOpenRow(row)}>
-                                            <TableCell component="th" scope="row">
-                                                {row['ID_DOMICILIO_RNUM']}
-                                            </TableCell>
-                                            <TableCell component="th" scope="row">
-                                                {row['SUBTITULO'] + " " + row['CALLE'] + " " + row['NUMERO'] + " " + row['COLONIA'] + " " + row['CIUDAD'] + " " + row['ESTADO']}
-                                            </TableCell>
-                                            <TableCell align='right'>
-                                                <Button className="btn-simple btn-icon" size="sm" color="success"
-                                                    onClick={() => handleOpenRow(row)}>
-                                                    <i className="tim-icons icon-simple-add" />
-                                                </Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
+                        currentTableData.length > 0 ?
+                            <TableContainer component={PaperStyled}>
+                                <Table sx={{ minWidth: 500 }} size="small" aria-label="custom pagination table">
+                                    <TableBody>
+                                        {currentTableData.map((row, index) => (
+                                            <TableRow hover key={index} onDoubleClick={() => handleOpenRow(row)}>
+                                                <TableCell component="th" scope="row">
+                                                    {row['ID_DOMICILIO_RNUM']}
+                                                </TableCell>
+                                                <TableCell component="th" scope="row">
+                                                    {row['SUBTITULO'] + " " + row['CALLE'] + " " + row['NUMERO'] + " " + row['COLONIA'] + " " + row['CIUDAD'] + " " + row['ESTADO']}
+                                                </TableCell>
+                                                <TableCell align='right'>
+                                                    <Button className="btn-simple btn-icon" size="sm" color="success"
+                                                        onClick={() => handleOpenRow(row)}>
+                                                        <i className="tim-icons icon-simple-add" />
+                                                    </Button>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
 
-                                    {emptyRows() > 0 && (
-                                        <TableRow style={{ height: 33 * emptyRows() }}>
-                                            <TableCell colSpan={6} />
-                                        </TableRow>
-                                    )}
-                                </TableBody>
-                            </Table>
-                            <br />
-                            <PaginationComponent
-                                totalCount={direcciones.length}
-                                currentPage={currentPage}
-                                pageSize={PageSize}
-                                onPageChange={page => setCurrentPage(page)}
-                                siblingCount={0} />
-                        </TableContainer>
+                                        {emptyRows() > 0 && (
+                                            <TableRow style={{ height: 33 * emptyRows() }}>
+                                                <TableCell colSpan={6} />
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                </Table>
+                                <br />
+                                <PaginationComponent
+                                    totalCount={direcciones.length}
+                                    currentPage={currentPage}
+                                    pageSize={PageSize}
+                                    onPageChange={page => setCurrentPage(page)}
+                                    siblingCount={0} />
+                            </TableContainer>
+                            :
+                            <PaperStyled>
+                                <h6 className="d-none d-sm-block text-center" style={{ padding: 50 }}>
+                                    No hay direcciones excepcionadas pendientes
+                                </h6>
+                            </PaperStyled>
                     }
                 </Container>
             </div>

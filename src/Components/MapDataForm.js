@@ -106,22 +106,15 @@ const MapDataForm = (props) => {
         var estadoNormalizacion1 = "";
 
         if (data && data._source && data._source.id_sw) {
-            lestado1 = data._source.nivel_1;
-            elmuni1 = data._source.nivel_2;
-            lcolonia1 = data._source.nivel_3;
-            lcalle1 = data._source.nivel_5;
-            lnumero1 = data._source.nivel_6;
-            if (data._source.nivel_7)
-                lpostal1 = data._source.nivel_7;
-            else
-                lpostal1 = "";
-            llat1 = data._source.latitud;
-            llng1 = data._source.longitud;
-            tipoCalle1 = data._source.nivel_4;
-            addressId1 = data._source.id_sw;
-            tipo1 = data._source.tipo;
-            fechaInsercion1 = data._source.fecha_alta;
-            fechaCambio1 = data._source.fecha_actualizacion;
+			setLestado(data._source.nivel_1)
+        setElmuni(data._source.nivel_2)
+        setLcolonia(data._source.nivel_3)
+        setLcalle(data._source.nivel_5)
+        setLnumero(data._source.nivel_6)
+        setLpostal(data._source.nivel_7)
+        setLlat(data._source.latitud)
+        setLlng(data._source.longitud)
+        setTipoCalle(data._source.nivel_4)
 
         } else if (data && data.address_components) {
 
@@ -233,8 +226,17 @@ const MapDataForm = (props) => {
             console.log(data['geometry'].location)
             llat1 = data['geometry'].location.lat;
             llng1 = data['geometry'].location.lng;
-
-            estadoNormalizacion1 = 'L';
+setLestado(lestado1)
+        setElmuni(elmuni1)
+        setLcolonia(lcolonia1)
+        setLcalle(lcalle1)
+        setLnumero(lnumero1)
+        setLpostal(lpostal1)
+        setLlat(llat1)
+        setLlng(llng1)
+        setTipoCalle(tipoCalle1)		  
+		
+		setEstadoNormalizacion('L')		 
         }
         else if (data != null) {
             axios.get(`${backendAPI}/api/consulta/` + id, {
@@ -245,24 +247,39 @@ const MapDataForm = (props) => {
                 //console.log(res.data[0]['ID_DOMICILIO_RNUM'])
                 var dirnom = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
                 handleInfoChanged(dirnom);
-
-                lestado1 = res.data[0]['ESTADO'];
-                elmuni1 = res.data[0]['CIUDAD'];
-                lcolonia1 = res.data[0]['COLONIA'];
-                lcalle1 = res.data[0]['CALLE'];
-                lnumero1 = res.data[0]['NUMERO'];
-                lpostal1 = res.data[0]['CODIGO_POSTAL'];
-                llat1 = data.latitud;
-                llng1 = data.longitud;
-                tipoCalle1 = res.data[0]['SUBTITULO'];
-                estadoNormalizacion1 = 'M';
+				window.tcalle = res.data[0]['SUBTITULO'];
+                window.calle = res.data[0]['CALLE']
+                window.numero = res.data[0]['NUMERO']
+                window.ciudad = res.data[0]['CIUDAD']
+                window.estado = res.data[0]['ESTADO']
+                window.colonia = res.data[0]['COLONIA']
+                window.postal = res.data[0]['CODIGO_POSTAL']
+				var tpostal = res.data[0]['CODIGO_POSTAL']+""
+				window.$postal =tpostal.substring(0,5)
+		console.log("del marcador!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+		console.log(data)
+         setLestado(res.data[0]['ESTADO'])
+        setElmuni(res.data[0]['CIUDAD'])
+        setLcolonia(res.data[0]['COLONIA'])
+        setLcalle(res.data[0]['CALLE'])
+        setLnumero(res.data[0]['NUMERO'])
+        setLpostal(tpostal)
+		if(data.latitud){
+        setLlat(data.latitud)
+        setLlng(data.longitud)
+		}
+		else{
+			setLlat(data.latitud())
+        setLlng(data.longitud())
+		}
+        setTipoCalle(res.data[0]['SUBTITULO'])
+		setEstadoNormalizacion('M')
             })
-            llat1 = data._source.latitud;
-            llng1 = data._source.longitud;
+
             //setTipoCalle(ltipocalle)
         }
 
-        setLestado(lestado1)
+        /*setLestado(lestado1)
         setElmuni(elmuni1)
         setLcolonia(lcolonia1)
         setLcalle(lcalle1)
@@ -275,7 +292,7 @@ const MapDataForm = (props) => {
         setTipo(tipo1)
         setFechaInsercion(fechaInsercion1)
         setFechaCambio(fechaCambio1)
-        setEstadoNormalizacion(estadoNormalizacion1)
+        setEstadoNormalizacion(estadoNormalizacion1)*/
     }, [data])
 
     return (
@@ -410,7 +427,7 @@ const MapDataForm = (props) => {
                         />
                     </div>
                 </div>
-                <div className="row" style={{ marginBottom: 8 }}>
+                {isConsult && <div className="row" style={{ marginBottom: 8 }}>
                     <div className="col-md-3">
                         <Label>Fecha Inserción</Label>
                     </div>
@@ -422,8 +439,8 @@ const MapDataForm = (props) => {
                             value={fechaInsercion}
                         />
                     </div>
-                </div>
-                <div className="row" style={{ marginBottom: 8 }}>
+                </div>}
+                {isConsult && <div className="row" style={{ marginBottom: 8 }}>
                     <div className="col-md-3">
                         <Label>Fecha Último Cambio</Label>
                     </div>
@@ -435,7 +452,7 @@ const MapDataForm = (props) => {
                             value={fechaCambio}
                         />
                     </div>
-                </div>
+                </div>}
                 <div className="row" style={{ marginBottom: 8 }}>
                     <div className="col-md-3">
                         <Label>Lat</Label>

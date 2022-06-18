@@ -24,7 +24,19 @@ const MapComponent = (props) => {
     const [streetViewCoord, setStreetViewCoord] = useState(null);
 
     useMemo(() => {
-        setCenter({ lat: location.lat, lng: location.lng });
+		console.log(location)
+		console.log("2222222222222222222222222222222222222222222")
+		try{
+			console.log("locacion3")
+        setCenter({ lat: location.lat(), lng: location.lng() });
+		console.log(location)
+		}
+		catch
+		{
+			console.log("locacion2")
+			setCenter({ lat: location.lat, lng: location.lng });
+			console.log(location)
+		} 
     }, [location]);
 
     const handleOpenConfirmationDialog = () => {

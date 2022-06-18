@@ -6,6 +6,7 @@ import { Alert, List, ListItem, ListItemButton, ListItemText, Paper, Snackbar, T
 import { alpha } from "@mui/material";
 import MapDataForm from '../../Components/MapDataForm';
 import AddressServices from '../../Services/AddressServices';
+import axios from 'axios';
 
 const PaperStyled = withStyles(theme => ({
     root: {
@@ -65,7 +66,12 @@ const ConsultaPage = () => {
                 },
                 size: 30
             };
-            AddressServices.searchByQuery(query).then((res) => {
+            axios.get('http://192.168.50.91:9200/direcciones/_search', {
+                params: {
+                    source: JSON.stringify(query),
+                    source_content_type: 'application/json'
+                }
+            }).then((res) => {
                 console.log(res.data.hits.hits);
                 setSearchData(res.data.hits.hits);
             }).catch(err => { handleShowSnackBar('error', 'Error al conectarse al servidor') })

@@ -38,10 +38,142 @@ const ExcepcionadasPage = (props) => {
     const zoom = 15;
 
     const handleChangeMarkerCoord = (coord) => {
+		console.log("/////////////////////////////////////////")							   
         console.log(coord)
         setMarkerCoord(coord)
+		handleDragEndMarker(coord)
     }
+const handleDragEndMarker = (coord) => {
+        console.log(coord)
+		console.log("------------------------------------")
+        setMarkerCoord(coord.latLng)
+		console.log("-----------------------------------")
+		const geocoder = new window.google.maps.Geocoder();
+		geocoder.geocode({ latLng: coord }).then((response) =>{
+			const { results } = response
+			console.log(response)
+			const address_components = results[0].address_components;
+                var components = {};
+                address_components.forEach(v1 => {
+                    v1.types.forEach(v2 => {
+                        components[v2] = v1.long_name
+                    })
+                });
+				var formato = results[0].formatted_address.split(",");
+                //console.log(formato[formato.length - 4])
+                //console.log(formato)
+                //console.log(components)
+                var lnumero = null;
+				for (var cc = 0; cc < results.length; cc++) {
+                    var address_components1 = results[cc].address_components;
+                    components = {}
+                    address_components1.forEach(v1 => {
+                        v1.types.forEach(v2 => {
+                            components[v2] = v1.long_name
+                        })
+                    });
+                    var elmuni = null;
+                    if (components.administrative_area_level_2 != null) {
+                        elmuni = components.administrative_area_level_2
+                    }
+                    if (components.administrative_area_level_3 != null) {
+                        elmuni = components.administrative_area_level_3
+                    }
+                    if (components.route != null) {
+                        var lcalle = components.route
+                    }
+                    //console.log(components.street_number)
+                    if (components.street_number != null && lnumero == null) {
+                        lnumero = components.street_number
+                    }
+                    if (components.sublocality != null) {
+                        var lcolonia = components.sublocality
+                    }
+                }
+				components = {};
+                address_components.forEach(v1 => {
+                    v1.types.forEach(v2 => {
+                        components[v2] = v1.long_name
+                    })
+                });
 
+                if (elmuni == null) {
+                    elmuni = formato[formato.length - 4]
+                }
+				//console.log("QQQQQQQQQQQQQQQQQQQQQqq " + lcalle)
+                //console.log(components.country);
+                var nivel_tipo_calle = null;
+                var ncalle = null;
+				if (lcalle.includes("Avenida")) {
+                    nivel_tipo_calle = "Avenida";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(8)
+                } else if (lcalle.includes("Calle")) {
+                    nivel_tipo_calle = "Calle";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(6)
+                } else if (lcalle.includes("Callejón")) {
+                    nivel_tipo_calle = "Callejón";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(8)
+                } else if (lcalle.includes("Prolongacion")) {
+                    nivel_tipo_calle = "Prolongacion";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(13)
+                } else if (lcalle.includes("Prolongación")) {
+                    nivel_tipo_calle = "Prolongación";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(13)
+                } else if (lcalle.includes("Callejon")) {
+                    nivel_tipo_calle = "Callejon";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(8)
+                } else if (lcalle.includes("Andador")) {
+                    nivel_tipo_calle = "Andador";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(8)
+                } else if (lcalle.includes("Carretera")) {
+                    nivel_tipo_calle = "Carretera";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(10)
+                } else if (lcalle.includes("Viaducto")) {
+                    nivel_tipo_calle = "Viaducto";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(9)
+                } else if (lcalle.includes("Autopista")) {
+                    nivel_tipo_calle = "Autopista";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(10)
+                } else if (lcalle.includes("Calzada")) {
+                    nivel_tipo_calle = "Calzada";
+                    ncalle = lcalle
+                    lcalle = ncalle.slice(8)
+                } else if (lcalle.includes("Cerrada")) {
+                    nivel_tipo_calle = "Cerrada";
+                } else if (lcalle.includes("Boulevard")) {
+                    nivel_tipo_calle = "Boulevard";
+                } else {
+                    nivel_tipo_calle = "";
+                }
+                //console.log(coord.latLng)
+
+				let source= {
+                        nivel_1: components.administrative_area_level_1,
+                        nivel_2: elmuni,
+                        nivel_3: lcolonia,
+                        nivel_4: nivel_tipo_calle,
+                        nivel_5: lcalle,
+                        nivel_6: lnumero,
+                        nivel_7: components.postal_code,
+                        latitud: coord.lat,
+                        longitud: coord.lng
+                    }
+					setSelectedDirection(source)
+					console.log(source)
+		console.log("----------------------------------");
+		})
+	}
+	
     const handleSearchItemClick = item => {
         setSelectedDirection(item)
         setMarkerCoord(null)
@@ -49,7 +181,7 @@ const ExcepcionadasPage = (props) => {
 
 
     const handleInfoChanged = (value) => {
-        setInfoValue(value);
+        //setInfoValue(value);
     }
 
     const handleOpenSaveConfirmationDialog = (data) => {
@@ -110,7 +242,7 @@ const ExcepcionadasPage = (props) => {
                 'colonia': formData.lcolonia.toUpperCase(),
                 'tcalle': formData.tipoCalle.toUpperCase(),
                 'calle': formData.lcalle.toUpperCase(),
-                'numero': formData.lnumero.toUpperCase(),
+                'numero': formData.lnumero,
                 'codigo_postal': formData.lpostal.toUpperCase(),
                 'lat': formData.llat,
                 'lng': formData.llng,
@@ -149,21 +281,41 @@ const ExcepcionadasPage = (props) => {
     }
 
     const getLocationCoord = () => {
+		//console.log("222222222222222222222222222222222")
+		console.log(selectedDirection)
         if (selectedDirection) {
-            if (selectedDirection.address_components) {
-                console.log(selectedDirection)
+			try{
+				var llat = selectedDirection.latitud();
+				return{
+					
+					lat: parseFloat(selectedDirection.latitud()),
+                    lng: parseFloat(selectedDirection.longitud())
+				}
+			}
+			catch{
+				if(selectedDirection.latitud)
+			{
+				console.log("333333333333333333333333333333333333333333")
+				return{
+					lat: parseFloat(selectedDirection.latitud),
+                    lng: parseFloat(selectedDirection.longitud)
+				}
+				
+			}
+				else if (selectedDirection.address_components) {
                 return {
                     lat: parseFloat(selectedDirection.geometry.location.lat),
                     lng: parseFloat(selectedDirection.geometry.location.lng)
                 }
-            } else {
-                console.log(selectedDirection)
+            } else if(selectedDirection._source) {
+				console.log("55555555555555555555555555555")
                 return {
                     lat: parseFloat(selectedDirection._source.latitud),
                     lng: parseFloat(selectedDirection._source.longitud)
                 }
             }
         }
+		}
         return { lat: parseFloat(0.0), lng: parseFloat(0.0) };
     }
 

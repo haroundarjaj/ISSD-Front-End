@@ -1,4 +1,4 @@
-export const authApi = 'http://192.168.50.91:9200';
+export const authApi = 'http://192.168.50.91:4444';
 
 export const backendAPI = 'http://localhost:9090';
 

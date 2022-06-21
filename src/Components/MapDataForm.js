@@ -90,8 +90,8 @@ const MapDataForm = (props) => {
     }, [tipoCalle, lcalle, lnumero, lcolonia, lpostal, elmuni, lestado])
 
     useEffect(() => {
-		console.log("//////////////////////////////////7")
-		console.log(data)
+        console.log("//////////////////////////////////7")
+        console.log(data)
         var elmuni1 = "";
         var lcalle1 = "";
         var lnumero1 = "";
@@ -108,15 +108,15 @@ const MapDataForm = (props) => {
         var estadoNormalizacion1 = "";
 
         if (data && data._source && data._source.id_sw) {
-			setLestado(data._source.nivel_1)
-        setElmuni(data._source.nivel_2)
-        setLcolonia(data._source.nivel_3)
-        setLcalle(data._source.nivel_5)
-        setLnumero(data._source.nivel_6)
-        setLpostal(data._source.nivel_7)
-        setLlat(data._source.latitud)
-        setLlng(data._source.longitud)
-        setTipoCalle(data._source.nivel_4)
+            setLestado(data._source.nivel_1)
+            setElmuni(data._source.nivel_2)
+            setLcolonia(data._source.nivel_3)
+            setLcalle(data._source.nivel_5)
+            setLnumero(data._source.nivel_6)
+            setLpostal(data._source.nivel_7)
+            setLlat(data._source.latitud)
+            setLlng(data._source.longitud)
+            setTipoCalle(data._source.nivel_4)
 
         } else if (data && data.address_components) {
 
@@ -228,19 +228,19 @@ const MapDataForm = (props) => {
             console.log(data['geometry'].location)
             llat1 = data['geometry'].location.lat;
             llng1 = data['geometry'].location.lng;
-setLestado(lestado1)
-        setElmuni(elmuni1)
-        setLcolonia(lcolonia1)
-        setLcalle(lcalle1)
-        setLnumero(lnumero1)
-        setLpostal(lpostal1)
-        setLlat(llat1)
-        setLlng(llng1)
-        setTipoCalle(tipoCalle1)		  
-		if(data.id<3)
-		setTipo("Manual por coordenadas cliente")		 
-		else
-		setTipo("Manual por sugerencia Google")
+            setLestado(lestado1)
+            setElmuni(elmuni1)
+            setLcolonia(lcolonia1)
+            setLcalle(lcalle1)
+            setLnumero(lnumero1)
+            setLpostal(lpostal1)
+            setLlat(llat1)
+            setLlng(llng1)
+            setTipoCalle(tipoCalle1)
+            if (data.id < 3)
+                setTipo("Manual por coordenadas cliente")
+            else
+                setTipo("Manual por sugerencia Google")
         }
         else if (data != null) {
             axios.get(`${backendAPI}/api/consulta/` + id, {
@@ -251,31 +251,31 @@ setLestado(lestado1)
                 //console.log(res.data[0]['ID_DOMICILIO_RNUM'])
                 var dirnom = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
                 handleInfoChanged(dirnom);
-				window.tcalle = res.data[0]['SUBTITULO'];
+                window.tcalle = res.data[0]['SUBTITULO'];
                 window.calle = res.data[0]['CALLE']
                 window.numero = res.data[0]['NUMERO']
                 window.ciudad = res.data[0]['CIUDAD']
                 window.estado = res.data[0]['ESTADO']
                 window.colonia = res.data[0]['COLONIA']
                 window.postal = res.data[0]['CODIGO_POSTAL']
-				window.$postal =res.data[0]['CODIGO_POSTAL']+""
-				var tpostal = window.$postal.substring(0,5)
-         setLestado(res.data[0]['ESTADO'])
-        setElmuni(res.data[0]['CIUDAD'])
-        setLcolonia(res.data[0]['COLONIA'])
-        setLcalle(res.data[0]['CALLE'])
-        setLnumero(res.data[0]['NUMERO'])
-        setLpostal(tpostal)
-		if(data.latitud){
-        setLlat(data.latitud)
-        setLlng(data.longitud)
-		}
-		else{
-			setLlat(data.latitud())
-        setLlng(data.longitud())
-		}
-        setTipoCalle(res.data[0]['SUBTITULO'])
-		setTipo('Manual por Marcador')
+                window.$postal = res.data[0]['CODIGO_POSTAL'] + ""
+                var tpostal = window.$postal.substring(0, 5)
+                setLestado(res.data[0]['ESTADO'])
+                setElmuni(res.data[0]['CIUDAD'])
+                setLcolonia(res.data[0]['COLONIA'])
+                setLcalle(res.data[0]['CALLE'])
+                setLnumero(res.data[0]['NUMERO'])
+                setLpostal(tpostal)
+                if (data.latitud) {
+                    setLlat(data.latitud)
+                    setLlng(data.longitud)
+                }
+                else {
+                    setLlat(data.latitud())
+                    setLlng(data.longitud())
+                }
+                setTipoCalle(res.data[0]['SUBTITULO'])
+                setTipo('Manual por Marcador')
             })
 
             //setTipoCalle(ltipocalle)

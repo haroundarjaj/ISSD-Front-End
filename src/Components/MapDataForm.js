@@ -90,6 +90,8 @@ const MapDataForm = (props) => {
     }, [tipoCalle, lcalle, lnumero, lcolonia, lpostal, elmuni, lestado])
 
     useEffect(() => {
+		console.log("//////////////////////////////////7")
+		console.log(data)
         var elmuni1 = "";
         var lcalle1 = "";
         var lnumero1 = "";
@@ -235,8 +237,10 @@ setLestado(lestado1)
         setLlat(llat1)
         setLlng(llng1)
         setTipoCalle(tipoCalle1)		  
-		
-		setEstadoNormalizacion('L')		 
+		if(data.id<3)
+		setTipo("Manual por coordenadas cliente")		 
+		else
+		setTipo("Manual por sugerencia Google")
         }
         else if (data != null) {
             axios.get(`${backendAPI}/api/consulta/` + id, {
@@ -254,10 +258,8 @@ setLestado(lestado1)
                 window.estado = res.data[0]['ESTADO']
                 window.colonia = res.data[0]['COLONIA']
                 window.postal = res.data[0]['CODIGO_POSTAL']
-				var tpostal = res.data[0]['CODIGO_POSTAL']+""
-				window.$postal =tpostal.substring(0,5)
-		console.log("del marcador!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-		console.log(data)
+				window.$postal =res.data[0]['CODIGO_POSTAL']+""
+				var tpostal = window.$postal.substring(0,5)
          setLestado(res.data[0]['ESTADO'])
         setElmuni(res.data[0]['CIUDAD'])
         setLcolonia(res.data[0]['COLONIA'])
@@ -273,7 +275,7 @@ setLestado(lestado1)
         setLlng(data.longitud())
 		}
         setTipoCalle(res.data[0]['SUBTITULO'])
-		setEstadoNormalizacion('M')
+		setTipo('Manual por Marcador')
             })
 
             //setTipoCalle(ltipocalle)
@@ -312,7 +314,7 @@ setLestado(lestado1)
                     </div>
                 </div>
 
-                {isConsult && <div className="row" style={{ marginBottom: 8 }}>
+                <div className="row" style={{ marginBottom: 8 }}>
                     <div className="col-md-3">
                         <Label>Tipo de Normalización</Label>
                     </div>
@@ -324,7 +326,7 @@ setLestado(lestado1)
                             value={tipo}
                         />
                     </div>
-                </div>}
+                </div>
                 <div className="row" style={{ marginBottom: 8 }}>
                     <div className="col-md-3">
                         <Label>Direccion Normalizada</Label>

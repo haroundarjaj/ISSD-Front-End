@@ -11,10 +11,11 @@ const searchByQuery = (query) => axios.get(`${backendAPI}/direcciones/_search`, 
 const getById = (id) => axios.get(`${backendAPI}/api/consulta/` + id)
 
 const getByQuery = (query) => axios.get(`${backendAPI}/api/consulta`, {
-    params: {
-        source: JSON.stringify(query),
-        source_content_type: 'application/json'
-    }
+
+})
+
+const getExceptionsByQuery = () => axios.get(`${backendAPI}/api/consulta`, {
+
 })
 
 const actualizeAddress = (id, params) => axios.post(`${backendAPI}/api/actualiza/` + id, null, {

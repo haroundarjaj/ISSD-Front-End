@@ -10,6 +10,9 @@ import MapDataForm from '../../Components/MapDataForm';
 import ConfirmationDialog from '../../Components/ConfirmationDialog';
 import AddressServices from '../../Services/AddressServices';
 import GoogleAPIServices from '../../Services/GoogleAPIServices';
+import axios from 'axios';
+
+
 
 const PaperStyled = withStyles(theme => ({
     root: {
@@ -211,6 +214,7 @@ const handleDragEndMarker = (coord) => {
             const address = res.data[0];
             var dirnom = address['SUBTITULO'] + " " + address['CALLE'] + " " + address['NUMERO'] + " " + address['CIUDAD'] + " " + address['ESTADO']
             setInfoValue(dirnom)
+			
 
             var cambio = "";
             if (address['ESTADO'] !== formData.lestado.toUpperCase()) {
@@ -231,7 +235,25 @@ const handleDragEndMarker = (coord) => {
             if (address['CALLE'] !== formData.lcalle.toUpperCase()) {
                 cambio = cambio + "S"
             }
-
+			var ltipo = ""
+			if(formData.tipo === 'Manual por Marcador')
+				ltipo="M"
+			else if(formData.tipo === 'Manual por coordenadas cliente')
+				ltipo="T"
+			else
+				ltipo = "L"
+			if(formData.lnumero ==="")
+			{
+				var nlnumero = "0"
+			}
+			else
+			{
+				var nlnumero = formData.lnumero
+			}
+			
+			
+			let date = new Date();
+			let fecha = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
 
             console.log(cambio)
             console.log(formData)
@@ -242,11 +264,13 @@ const handleDragEndMarker = (coord) => {
                 'colonia': formData.lcolonia.toUpperCase(),
                 'tcalle': formData.tipoCalle.toUpperCase(),
                 'calle': formData.lcalle.toUpperCase(),
-                'numero': formData.lnumero,
+                'numero': nlnumero,
                 'codigo_postal': formData.lpostal.toUpperCase(),
                 'lat': formData.llat,
                 'lng': formData.llng,
-                'codigo': cambio
+                'codigo': cambio,
+				'tipo':ltipo,
+				'fecha': fecha
             }
             AddressServices.actualizeAddress(id, params).then((res) => {
                 console.log(res);
@@ -281,7 +305,6 @@ const handleDragEndMarker = (coord) => {
     }
 
     const getLocationCoord = () => {
-		//console.log("222222222222222222222222222222222")
 		console.log(selectedDirection)
         if (selectedDirection) {
 			try{
@@ -295,7 +318,6 @@ const handleDragEndMarker = (coord) => {
 			catch{
 				if(selectedDirection.latitud)
 			{
-				console.log("333333333333333333333333333333333333333333")
 				return{
 					lat: parseFloat(selectedDirection.latitud),
                     lng: parseFloat(selectedDirection.longitud)
@@ -308,7 +330,6 @@ const handleDragEndMarker = (coord) => {
                     lng: parseFloat(selectedDirection.geometry.location.lng)
                 }
             } else if(selectedDirection._source) {
-				console.log("55555555555555555555555555555")
                 return {
                     lat: parseFloat(selectedDirection._source.latitud),
                     lng: parseFloat(selectedDirection._source.longitud)
@@ -319,19 +340,47 @@ const handleDragEndMarker = (coord) => {
         return { lat: parseFloat(0.0), lng: parseFloat(0.0) };
     }
 
-    const geocoder = (dir) => {
-        GoogleAPIServices.googleGeoCoder(dir[0]['TERMINAL_LONGITUD'], dir[0]['TERMINAL_LATITUD']).then((res) => {
+    const geocoder = (dir,dirnor,campolat,campolon) => {
+
+		axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=` + dirnor + `&key=AIzaSyDoLzHyM8TTL2LnInXa18HrrrdY2gG4CbE`, {
+
+        }).then((res) => {
+            window.$georev = res.data.results
+			console.log(window.$georev)
+            //setSelectedDirection(res.data.results[0])
+            //setMarkerCoord(null)
+            //setAddressesData(res.data.results)
+        })
+		console.log(dir)
+		console.log(campolat)
+        GoogleAPIServices.googleGeoCoder(dir[0][campolon], dir[0][campolat]).then((res) => {
             console.log(res.data.results)
             setSelectedDirection(res.data.results[0])
+			console.log(window.$georev)
+			var datos = []
+			for(var i = 0; i<3;i++)
+			{
+				datos[i] = res.data.results[i];
+			}
+			console.log(datos)
+			
+			var k = datos.length;
+			for(i=0;i<window.$georev.length;i++)
+			{
+				datos[k] = window.$georev[i]
+				k++;
+			}
+			console.log(datos)
+			for(i = 0;i<datos.length;i++)
+			{
+				console.log(i)
+				datos[i].id = i
+				console.log(datos[i].id)
+			}
             setMarkerCoord(null)
             var rr = [0]
             rr = res.data.results
-            console.log(rr)
-            delete rr[rr.length - 1]
-            delete rr[rr.length - 2]
-            delete rr[rr.length - 3]
-            delete rr[rr.length - 4]
-            setAddressesData(rr)
+            setAddressesData(datos)
         }).catch(err => { handleShowSnackBar('error', 'Error al conectarse al servidor de Google') });
     }
 
@@ -357,7 +406,41 @@ const handleDragEndMarker = (coord) => {
         AddressServices.getById(id).then((res) => {
             var dirnom = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
             setInfoValue(dirnom)
-            geocoder(res.data)
+			axios.get(`http://localhost:9090/xml`, {
+
+        }).then((res1) => {
+            //console.log(res.data)
+			const parser = new DOMParser();
+			const xmlDOM = parser.parseFromString(res1.data,"text/xml");
+			const value = xmlDOM.getElementsByTagName("campo_entrada");
+			//console.log(value)
+			for(var ii=0;ii<value.length;ii++)
+			{
+				//console.log(value[ii].innerHTML)
+				if(value[ii].innerHTML.includes('long_cliente'))
+				{
+					
+					var campolon = value[ii].innerHTML.split(" ")
+					console.log(campolon[0])
+				}
+				if(value[ii].innerHTML.includes('lat_cliente'))
+				{
+					
+					var campolat = value[ii].innerHTML.split(" ")
+					console.log(campolat[0])
+				}
+			}
+			if(campolat && campolon)
+			{
+				geocoder(res.data,dirnom,campolat[0],campolon[0])
+				handleShowSnackBar('success', 'conexión correcta')
+			}
+			else
+			{
+				handleShowSnackBar('error', 'Los campos de latitud o longitud no están mapeados')
+			}
+        })
+            
         }).catch(err => { handleShowSnackBar('error', 'Error al conectarse al servidor') });
     }, []);
 

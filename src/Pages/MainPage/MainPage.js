@@ -53,10 +53,12 @@ const MainPage = (props) => {
                         }}*/
                         onClick={() => {
                             const AUTH_TOKEN = localStorage.getItem('token');
-                            if (!AUTH_TOKEN || isExpired(AUTH_TOKEN)) {
-                                setOpenLoginDialog(true)
-                            } else {
+                             if (AUTH_TOKEN) {
                                 setOpenMainDialog(true)
+                            } else {
+                                setOpenLoginDialog(true)
+									
+								
                             }
                         }}
                     >

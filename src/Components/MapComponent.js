@@ -5,17 +5,96 @@ import { GoogleMap, Marker, useJsApiLoader, StreetViewPanorama } from '@react-go
 import { googleMapsApiKey } from '../Config/apiUrl';
 import { Dialog, Zoom } from '@mui/material';
 import ConfirmationDialog from './ConfirmationDialog';
+import {cadena} from '../Config/apiUrl';
 
 const containerStyle = {
     width: '100%',
     height: '95vh'
 };
 
+
+/*function xmlToJson( xml ) {
+var obj = {};
+ 
+  if ( xml.nodeType == 1 ) { // element
+    // do attributes
+    if ( xml.attributes.length > 0 ) {
+    obj["@attributes"] = {};
+      for ( var j = 0; j < xml.attributes.length; j++ ) {
+        var attribute = xml.attributes.item( j );
+        obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
+      }
+    }
+  } else if ( xml.nodeType == 3 ) { // text
+    obj = xml.nodeValue;
+  }
+ 
+  // do children
+  if ( xml.hasChildNodes() ) {
+    for( var i = 0; i < xml.childNodes.length; i++ ) {
+      var item = xml.childNodes.item(i);
+      var nodeName = item.nodeName;
+      if ( typeof(obj[nodeName] ) == "undefined" ) {
+        obj[nodeName] = xmlToJson( item );
+      } else {
+        if ( typeof( obj[nodeName].push ) == "undefined" ) {
+          var old = obj[nodeName];
+          obj[nodeName] = [];
+          obj[nodeName].push( old );
+        }
+        obj[nodeName].push( xmlToJson( item ) );
+      }
+    }
+  }
+  return obj;
+};
+
+function cadena (){
+	var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+       // Typical action to be performed when the document is ready:
+       //console.log(this.responseXML.getElementsByTagName("google")[0]);
+	   var str = this.responseXML
+		var jsonr = xmlToJson(str)
+		//console.log(jsonr.normalizador_config.api_keys.google['#text'])
+		var key = jsonr.normalizador_config.api_keys.google['#text']
+		//console.log("222222222222222222222222222222222")
+		//console.log(key)
+		window.$key = key;
+		return key
+    }
+};
+xhttp.open("GET","http://localhost:9090/xmlapi",true);
+xhttp.send();
+//console.log("---------------------------")
+//console.log(window.$key)
+//return window.$key
+}*/
+
+
+window.$k = cadena()
+
 const MapComponent = (props) => {
+	//console.log(window.$k)
+	console.log("loadeddddddddddd")
+	var cc = cadena()
+	//console.log(isLoaded)
+	console.log("ccccccccccccccccccccccccccccccc")
+	console.log(cc)
+	if(cc)
+	{
+		var cc = cc
+	}
+	else {
+		var cc = cadena()
+	}
+	console.log("99999999999999999999999999999")
+	console.log(cc)
     const { location, zoom, handleChangeMarkerCoord, isConsult } = props;
-    const { isLoaded } = useJsApiLoader({
+    var { isLoaded } = useJsApiLoader({
         id: 'google-map-script',
-        googleMapsApiKey: googleMapsApiKey
+        googleMapsApiKey: cadena()
     })
 
     const [map, setMap] = useState(null);
@@ -91,6 +170,10 @@ const MapComponent = (props) => {
     }, [])
 
     console.log(map)
+	console.log("44444444444444444444444444444444444444444")
+	var ccc = cadena()
+	console.log(window.$k)
+	
 
     return isLoaded ?
         <>

@@ -18,6 +18,10 @@ const getExceptionsByQuery = () => axios.get(`${backendAPI}/api/consulta`, {
 
 })
 
+const buscaxml = () => axios.get(`${backendAPI}/xml`, {
+
+})
+
 const actualizeAddress = (id, params) => axios.post(`${backendAPI}/api/actualiza/` + id, null, {
     params
 })
@@ -32,7 +36,8 @@ const AddressServices = {
     getById,
     getByQuery,
     actualizeAddress,
-    confirmIndeterminate
+    confirmIndeterminate,
+	buscaxml
 }
 
 export default AddressServices;

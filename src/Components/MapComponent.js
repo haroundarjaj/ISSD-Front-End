@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-loop-func */
-import React, { useMemo, useState } from 'react'
+import React, { useEffect,useMemo, useState } from 'react'
 import { GoogleMap, Marker, useJsApiLoader, StreetViewPanorama } from '@react-google-maps/api';
 import { googleMapsApiKey } from '../Config/apiUrl';
 import { Dialog, Zoom } from '@mui/material';
 import ConfirmationDialog from './ConfirmationDialog';
-import {cadena} from '../Config/apiUrl';
+import {cadena, apikey} from '../Config/apiUrl';
 
 const containerStyle = {
     width: '100%',
@@ -13,7 +13,8 @@ const containerStyle = {
 };
 
 
-/*function xmlToJson( xml ) {
+
+function xmlToJson( xml ) {
 var obj = {};
  
   if ( xml.nodeType == 1 ) { // element
@@ -49,7 +50,7 @@ var obj = {};
   return obj;
 };
 
-function cadena (){
+/*function cadena (){
 	var xhttp = new XMLHttpRequest();
 xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
@@ -75,26 +76,20 @@ xhttp.send();
 
 window.$k = cadena()
 
+	
+
 const MapComponent = (props) => {
 	//console.log(window.$k)
+	console.log("..............................")
+	console.log(props)
+	console.log(window.pkey)
 	console.log("loadeddddddddddd")
 	var cc = cadena()
-	//console.log(isLoaded)
-	console.log("ccccccccccccccccccccccccccccccc")
-	console.log(cc)
-	if(cc)
-	{
-		var cc = cc
-	}
-	else {
-		var cc = cadena()
-	}
-	console.log("99999999999999999999999999999")
-	console.log(cc)
+	console.log(props.ccc)
     const { location, zoom, handleChangeMarkerCoord, isConsult } = props;
     var { isLoaded } = useJsApiLoader({
         id: 'google-map-script',
-        googleMapsApiKey: cadena()
+        googleMapsApiKey: props.ppa
     })
 
     const [map, setMap] = useState(null);
@@ -168,6 +163,7 @@ const MapComponent = (props) => {
     const onUnmount = React.useCallback(function callback(map) {
         setMap(null)
     }, [])
+	
 
     console.log(map)
 	console.log("44444444444444444444444444444444444444444")
@@ -175,7 +171,8 @@ const MapComponent = (props) => {
 	console.log(window.$k)
 	
 
-    return isLoaded ?
+
+    return isLoaded ?(
         <>
             <GoogleMap
                 mapContainerStyle={containerStyle}
@@ -216,7 +213,9 @@ const MapComponent = (props) => {
                     })}
                 TransitionComponent={Zoom}
             />
-        </>
+        </>)
         : <></>
 }
+//setTimeout(()=>{
 export default MapComponent;
+//},2000)

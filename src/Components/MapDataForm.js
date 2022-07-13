@@ -90,8 +90,8 @@ const MapDataForm = (props) => {
     }, [tipoCalle, lcalle, lnumero, lcolonia, lpostal, elmuni, lestado])
 
     useEffect(() => {
-        console.log("//////////////////////////////////7")
-        console.log(data)
+		console.log("//////////////////////////////////7")
+		console.log(data)
         var elmuni1 = "";
         var lcalle1 = "";
         var lnumero1 = "";
@@ -106,17 +106,52 @@ const MapDataForm = (props) => {
         var fechaInsercion1 = "";
         var fechaCambio1 = "";
         var estadoNormalizacion1 = "";
-
-        if (data && data._source && data._source.id_sw) {
-            setLestado(data._source.nivel_1)
-            setElmuni(data._source.nivel_2)
-            setLcolonia(data._source.nivel_3)
-            setLcalle(data._source.nivel_5)
-            setLnumero(data._source.nivel_6)
-            setLpostal(data._source.nivel_7)
-            setLlat(data._source.latitud)
-            setLlng(data._source.longitud)
-            setTipoCalle(data._source.nivel_4)
+		console.log("Aquí va la data!!!!!!!!!!!!!!!!!!!!!")
+		console.log(data)
+		if(data && data.marcador)
+		{
+			console.log("por marcador")
+			setLestado(data[0]['ESTADO'])
+        setElmuni(data[0]['CIUDAD'])
+        setLcolonia(data[0]['COLONIA'])
+        setLcalle(data[0]['CALLE'])
+        setLnumero(data[0]['NUMERO'])
+		var cpostal =data[0]['CODIGO_POSTAL']+""
+		setLpostal(cpostal.substring(0,5))
+		setTipo("Manual por movimiento de marcador")
+		}
+		else if(data && data.lallave)
+		{
+			console.log(data.id)
+			if(data.id>0)
+				setTipo("Manual por sugerencia de google")
+			else
+				setTipo("Manual por coordenadas cliente")
+			console.log(data)
+			setLestado(data.estado)
+        setElmuni(data.ciudad)
+        setLcolonia(data.colonia)
+        setLcalle(data.calle)
+        setLnumero(data.numero)
+		setLpostal(data.postal)
+		setLlat(data.lat)
+        setLlng(data.long)
+		}
+        else if (data && data._source && data._source.id_sw) {
+			console.log(data._source)
+			setLestado(data._source.nivel_1)
+        setElmuni(data._source.nivel_2)
+        setLcolonia(data._source.nivel_3)
+        setLcalle(data._source.nivel_5)
+        setLnumero(data._source.nivel_6)
+		if(data._source.nivel_7)
+        setLpostal(data._source.nivel_7)
+		else
+		setLpostal("")
+        setLlat(data._source.latitud)
+        setLlng(data._source.longitud)
+        setTipoCalle(data._source.nivel_4)
+		handleInfoChanged(data._source.direccion_normalizada)
 
         } else if (data && data.address_components) {
 
@@ -228,54 +263,57 @@ const MapDataForm = (props) => {
             console.log(data['geometry'].location)
             llat1 = data['geometry'].location.lat;
             llng1 = data['geometry'].location.lng;
-            setLestado(lestado1)
-            setElmuni(elmuni1)
-            setLcolonia(lcolonia1)
-            setLcalle(lcalle1)
-            setLnumero(lnumero1)
-            setLpostal(lpostal1)
-            setLlat(llat1)
-            setLlng(llng1)
-            setTipoCalle(tipoCalle1)
-            if (data.id < 3)
-                setTipo("Manual por coordenadas cliente")
-            else
-                setTipo("Manual por sugerencia Google")
+setLestado(lestado1)
+        setElmuni(elmuni1)
+        setLcolonia(lcolonia1)
+        setLcalle(lcalle1)
+        setLnumero(lnumero1)
+        setLpostal(lpostal1)
+        setLlat(llat1)
+        setLlng(llng1)
+        setTipoCalle(tipoCalle1)		  
+		if(data.id<1)
+		setTipo("Manual por coordenadas cliente")		 
+		else
+		setTipo("Manual por sugerencia Google")
         }
-        else if (data != null) {
+        else if (data != null && data.lallave!= undefined) {
+			console.log("aqui es-----")
             axios.get(`${backendAPI}/api/consulta/` + id, {
 
             }).then((res) => {
                 //console.log(res.data)
                 //setSelectedDirection(res.data[0])
                 //console.log(res.data[0]['ID_DOMICILIO_RNUM'])
+				console.log("está entrando---------------------------")
                 var dirnom = res.data[0]['SUBTITULO'] + " " + res.data[0]['CALLE'] + " " + res.data[0]['NUMERO'] + " " + res.data[0]['CIUDAD'] + " " + res.data[0]['ESTADO']
                 handleInfoChanged(dirnom);
-                window.tcalle = res.data[0]['SUBTITULO'];
+				window.tcalle = res.data[0]['SUBTITULO'];
                 window.calle = res.data[0]['CALLE']
                 window.numero = res.data[0]['NUMERO']
                 window.ciudad = res.data[0]['CIUDAD']
                 window.estado = res.data[0]['ESTADO']
                 window.colonia = res.data[0]['COLONIA']
                 window.postal = res.data[0]['CODIGO_POSTAL']
-                window.$postal = res.data[0]['CODIGO_POSTAL'] + ""
-                var tpostal = window.$postal.substring(0, 5)
-                setLestado(res.data[0]['ESTADO'])
-                setElmuni(res.data[0]['CIUDAD'])
-                setLcolonia(res.data[0]['COLONIA'])
-                setLcalle(res.data[0]['CALLE'])
-                setLnumero(res.data[0]['NUMERO'])
-                setLpostal(tpostal)
-                if (data.latitud) {
-                    setLlat(data.latitud)
-                    setLlng(data.longitud)
-                }
-                else {
-                    setLlat(data.latitud())
-                    setLlng(data.longitud())
-                }
-                setTipoCalle(res.data[0]['SUBTITULO'])
-                setTipo('Manual por Marcador')
+				window.$postal =res.data[0]['CODIGO_POSTAL']+""
+				var tpostal = window.$postal.substring(0,5)
+         setLestado(res.data[0]['ESTADO'])
+        setElmuni(res.data[0]['CIUDAD'])
+        setLcolonia(res.data[0]['COLONIA'])
+        setLcalle(res.data[0]['CALLE'])
+        setLnumero(res.data[0]['NUMERO'])
+        setLpostal(tpostal)
+		console.log(data)
+		if(data.latitud){
+        setLlat(data.latitud)
+        setLlng(data.longitud)
+		}
+		else{
+			setLlat(data.latitud())
+        setLlng(data.longitud())
+		}
+        setTipoCalle(res.data[0]['SUBTITULO'])
+		setTipo('Manual por Marcador')
             })
 
             //setTipoCalle(ltipocalle)

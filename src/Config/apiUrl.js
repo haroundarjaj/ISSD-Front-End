@@ -64,5 +64,6 @@ xhttp.send();
 return window.$key
 }
 
+export const apikey = cadena()
 
 //export const googleMapsApiKey = cadena();
